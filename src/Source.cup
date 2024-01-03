@@ -1,0 +1,14 @@
+import java_cup.runtime.*;
+
+parser code {:
+  public parser (java.io.Reader input) {
+    super(new Yylex(input));
+  }
+:};
+
+terminal ALL, CLL, AP, CP, AC, CC, COMA, PYC;
+nonterminal some;
+
+some ::= ;
+
+
