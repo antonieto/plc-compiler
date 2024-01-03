@@ -13,29 +13,35 @@ PLC_OUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/te
 
 # Cup compilation
 CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.cup'
-CUP_COMPILE_COMMAND = f'cup {CUP_SOURCE_FILE}'
 
 # JFlex compilation
 JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.flex'
-JFLEX_COMPILE_COMMAND = f'jflex {JFLEX_SOURCE_FILE} -d ./'
 
 # JAVAC Commands
 CUPPATH  = '/Users/antoniochairesmonroy/Applications/cup-0.11b/java-cup-11b-runtime.jar'
-JAVA_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/*.java'
+JAVA_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/*.java'
 
 
 CTD_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd'
 
+OUTPUT_PATH= '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src'
+
 # Compiles cup source code
 def cup_action():
-    subprocess.run(CUP_COMPILE_COMMAND, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+    output = subprocess.run(f'cup {CUP_SOURCE_FILE}', shell=True, text=True, capture_output=True)
+    if output.returncode != 0:
+        raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
+    
+    output = subprocess.run(f'mv parser.java sym.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
+    if output.returncode != 0:
+        raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
 
 def jflex_action():
-    subprocess.run(JFLEX_COMPILE_COMMAND, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+    subprocess.run(f'jflex -d {OUTPUT_PATH} {JFLEX_SOURCE_FILE}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
         
 
 def javac_action():
-    output = subprocess.run(f'javac -cp {CUPPATH}:. {JAVA_SOURCE}', shell=True, capture_output=True, text=True)
+    output = subprocess.run(f'javac -d {OUTPUT_PATH} -cp {CUPPATH}:. {JAVA_SOURCE}', shell=True, capture_output=True, text=True)
     if output.returncode != 0:
         raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
     
@@ -96,12 +102,11 @@ class TestAll:
     @pytest.mark.parametrize('test_case', get_plc_tests())
     def test_one(self, test_case: Tuple[str, str]):
         name, content = test_case
-
         outputs = get_plc_out()
-        assert 1 == 1
         for o_name, o_content in outputs:
             if o_name.startswith(name.split('.')[0]):
                 path = os.path.join(PLC_TEST_PATH, name)
+                print(f'Attempting ctd-compilation of {path}')
                 real_output = self.run_ctd(path)
                 assert o_content == real_output
 

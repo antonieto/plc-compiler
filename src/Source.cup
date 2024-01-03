@@ -6,9 +6,63 @@ parser code {:
   }
 :};
 
-terminal ALL, CLL, AP, CP, AC, CC, COMA, PYC;
-nonterminal some;
+// Keywords
+terminal IF, ELSE, WHILE, DO, FOR, PRINT;
 
-some ::= ;
+// Parenthesis
+terminal LPAR, RPAR, LCURL, RCURL, SEMI;
 
+// Operators
+terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR;
 
+// Basic symbols
+terminal IDENT, INT;
+
+// ======================================
+// Now, nonterminals
+nonterminal statement_list, statement, expression, condition, elseStatement;
+
+// Precedences
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence left UMINUS;
+precedence left ELSE;
+precedence left OR;
+precedence left AND;
+
+statement_list ::= statement
+    | statement_list statement;
+
+statement ::= expression SEMI
+    | IF LPAR condition RPAR statement elseStatement
+    | WHILE LPAR condition RPAR statement
+    | DO statement WHILE LPAR condition RPAR SEMI
+    | FOR LPAR expression SEMI condition SEMI expression RPAR statement
+    | PRINT LPAR expression RPAR SEMI
+    | LCURL statement_list RCURL;
+
+// Resolve IF ELSE
+
+elseStatement ::= | ELSE statement;
+
+// Expression definition
+expression ::= expression PLUS expression
+    | expression MINUS expression
+    | expression TIMES expression
+    | expression DIVIDE expression
+    | MINUS expression %prec UMINUS// Unary minus (add precedence)
+    | LPAR expression RPAR
+    | IDENT ASIGN expression
+    | IDENT
+    | INT;
+
+condition ::= expression EQ expression
+    | expression NOTEQ expression
+    | expression LT expression
+    | expression LTEQ expression
+    | expression GT expression
+    | expression GTEQ expression
+    | NOT expression
+    | condition AND condition
+    | condition OR condition
+    | LPAR condition RPAR;
