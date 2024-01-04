@@ -4,6 +4,12 @@ import java_cup.runtime.*;
 %cup
 
 %%
+if                                                    { return new Symbol(sym.IF); }
+else                                                  { return new Symbol(sym.ELSE); }
+while                                                 { return new Symbol(sym.WHILE); }
+do                                                    { return new Symbol(sym.DO); }
+for                                                   { return new Symbol(sym.FOR); }
+print                                                 { return new Symbol(sym.PRINT); }
 \{                                                    { return new Symbol(sym.LCURL); }
 \}                                                    { return new Symbol(sym.RCURL); }
 \(                                                    { return new Symbol(sym.LPAR); }

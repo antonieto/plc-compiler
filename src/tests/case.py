@@ -49,14 +49,16 @@ class Compiler():
             self.cmd_prefix = cmd_prefix
 
     def compile(self, src_path: str, target_directory: Optional[str] = None) -> str:
-        compile_cmd = f'{self.cmd_prefix} {self.path}' if self.cmd_prefix is not None else self.path
-        output = subprocess.check_output([compile_cmd, src_path])
-        
-        if target_directory:
-            written_file = open(target_directory, 'w+')
-            written_file.write(str(output))
-        
-        return str(output)
-
-    pass
-
+        try:
+            compile_cmd = f'{self.cmd_prefix} {self.path}' if self.cmd_prefix is not None else self.path
+            output = subprocess.check_output(f'{compile_cmd} {src_path}', shell=True)
+            out_str = output.decode(encoding='utf-8')
+            if target_directory:
+                file = open(target_directory, 'w+')
+                file.write(out_str)
+            return out_str
+                
+        except Exception as e:
+            print('Failed to run command', e)
+            return str(e)
+                

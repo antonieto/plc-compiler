@@ -10,6 +10,7 @@ import functools
 # Test directories
 PLC_TEST_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plc-test/'
 PLC_OUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plc-out/'
+CTD_OUTPUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd-out/'
 
 # Cup compilation
 CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.cup'
@@ -32,10 +33,12 @@ def cup_action():
     if output.returncode != 0:
         raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
     
-    output = subprocess.run(f'mv parser.java sym.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
+    output = subprocess.run(f'mv -f parser.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
     if output.returncode != 0:
         raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
-
+    output = subprocess.run(f'mv -f sym.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
+    if output.returncode != 0:
+        raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
 def jflex_action():
     subprocess.run(f'jflex -d {OUTPUT_PATH} {JFLEX_SOURCE_FILE}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
         
@@ -90,23 +93,27 @@ class TestAll:
         Interptretates a three-way-code representation using the CTD binary.
     """
     def run_ctd(self, src: str) -> str:
-        out = subprocess.check_output([CTD_PATH, src])
-        return str(out)
-    
+        out = subprocess.check_output(f'{CTD_PATH} {src}', shell=True)
+        return out.decode('utf-8') 
     """
         Compiles PLC to CTD code representation.
     """
     def plc_to_ctd(self, compiler: Compiler, src_path: str, test_name: str) -> str:
-        return compiler.compile(src_path)
+        return compiler.compile(src_path=src_path, target_directory=f'{CTD_OUTPUT_PATH}{test_name}.ctd')
     
     @pytest.mark.parametrize('test_case', get_plc_tests())
     def test_one(self, test_case: Tuple[str, str]):
-        name, content = test_case
+        compiler = Compiler(
+                path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ Main',
+            cmd_prefix=f'java -cp'
+        )
+        name, _ = test_case
+        name = name.split('.')[0]
         outputs = get_plc_out()
         for o_name, o_content in outputs:
             if o_name.startswith(name.split('.')[0]):
-                path = os.path.join(PLC_TEST_PATH, name)
-                print(f'Attempting ctd-compilation of {path}')
-                real_output = self.run_ctd(path)
-                assert o_content == real_output
+                path = os.path.join(PLC_TEST_PATH, f'{name}.pl')
+                self.plc_to_ctd(compiler=compiler, src_path=path, test_name=name)
+                ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{name}.ctd')
+                assert ctd_output == o_content
 
