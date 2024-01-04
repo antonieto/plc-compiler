@@ -20,7 +20,10 @@ terminal IDENT, INT;
 
 // ======================================
 // Now, nonterminals
-nonterminal statement_list, statement, expression, condition, elseStatement;
+nonterminal statement_list, statement, condition, elseStatement;
+nonterminal String expression;
+// Util nonterminals
+nonterminal String nt_newVar, nt_newLabel;
 
 // Precedences
 precedence left PLUS, MINUS;
@@ -33,12 +36,23 @@ precedence left AND;
 statement_list ::= statement
     | statement_list statement;
 
+nt_newVar ::= {:
+    RESULT = Main.newVar();
+:};
+
+nt_newLabel ::= {:
+    RESULT = Main.newLabel();
+:};
+
 statement ::= expression SEMI
     | IF LPAR condition RPAR statement elseStatement
     | WHILE LPAR condition RPAR statement
     | DO statement WHILE LPAR condition RPAR SEMI
     | FOR LPAR expression SEMI condition SEMI expression RPAR statement
-    | PRINT LPAR expression RPAR SEMI
+    | PRINT LPAR expression:v {:
+        Main.out.print("print " + v + ";");
+        Main.out.println();
+    :} RPAR SEMI
     | LCURL statement_list RCURL;
 
 // Resolve IF ELSE
@@ -46,15 +60,40 @@ statement ::= expression SEMI
 elseStatement ::= | ELSE statement;
 
 // Expression definition
-expression ::= expression PLUS expression
-    | expression MINUS expression
-    | expression TIMES expression
-    | expression DIVIDE expression
+expression ::= expression:v1 PLUS expression:v2 {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + v1 + " + " + v2 + ";");
+        RESULT = var;
+    :}
+    | expression:e1 MINUS expression:e2 {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + e1 + " - " + e2 + ";");
+        RESULT = var;
+    :}
+    | expression:e1 TIMES expression:e2 {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + e1 + " * " + e2 + ";");
+        RESULT = var;
+    :}
+    | expression:e1 DIVIDE expression:e2 {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + e1 + " / " + e2 + ";");
+        RESULT = var;
+    :}
     | MINUS expression %prec UMINUS// Unary minus (add precedence)
-    | LPAR expression RPAR
-    | IDENT ASIGN expression
-    | IDENT
-    | INT;
+    | LPAR expression:e {: RESULT = e; :} RPAR
+    | IDENT:id ASIGN expression:e {:
+        String var = Main.newVar();
+        Main.out.println(id + " = " + e + ";");
+        Main.out.println(var + " = " + e + ";");
+        RESULT = var;
+     :}
+    | IDENT:id {: RESULT = id.toString(); :}
+    | INT:val {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + val + ";");
+        RESULT = var;
+    :};
 
 condition ::= expression EQ expression
     | expression NOTEQ expression

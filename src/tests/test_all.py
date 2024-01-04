@@ -93,15 +93,19 @@ class TestAll:
         Interptretates a three-way-code representation using the CTD binary.
     """
     def run_ctd(self, src: str) -> str:
-        out = subprocess.check_output(f'{CTD_PATH} {src}', shell=True)
-        return out.decode('utf-8') 
+        cmd = f'{CTD_PATH} {src}'
+        out = subprocess.run(cmd, text=True, capture_output=True, shell=True)
+        if out.returncode != 0:
+            err = out.stderr
+            raise Exception(f'CTD Failed: {err}')
+        return out.stdout
     """
         Compiles PLC to CTD code representation.
     """
     def plc_to_ctd(self, compiler: Compiler, src_path: str, test_name: str) -> str:
         return compiler.compile(src_path=src_path, target_directory=f'{CTD_OUTPUT_PATH}{test_name}.ctd')
     
-    @pytest.mark.parametrize('test_case', get_plc_tests())
+    @pytest.mark.parametrize('test_case', get_plc_out())
     def test_one(self, test_case: Tuple[str, str]):
         compiler = Compiler(
                 path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ Main',

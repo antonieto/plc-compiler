@@ -715,7 +715,7 @@ class Yylex implements java_cup.runtime.Scanner {
           // fall through
           case 36: break;
           case 10:
-            { return new Symbol(sym.INT);
+            { int value = Integer.valueOf(yytext()); return new Symbol(sym.INT, value);
             }
           // fall through
           case 37: break;
@@ -740,7 +740,7 @@ class Yylex implements java_cup.runtime.Scanner {
           // fall through
           case 41: break;
           case 15:
-            { return new Symbol(sym.IDENT);
+            { return new Symbol(sym.IDENT, yytext());
             }
           // fall through
           case 42: break;

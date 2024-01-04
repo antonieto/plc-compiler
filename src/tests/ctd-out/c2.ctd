@@ -1,0 +1,15 @@
+$0 = 0;
+$1 = a * b;
+print c;
+$2 = 1;
+a = null;
+$3 = null;
+$4 = 1;
+b = null;
+$5 = null;
+$6 = 1;
+c = null;
+$7 = null;
+$8 = a * b;
+$9 = $8 * c;
+print $9;
