@@ -763,7 +763,59 @@ class CUP$parser$actions {
           case 30: // condition ::= expression LTEQ expression 
             {
               String RESULT =null;
+		int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String e1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        // First evaluate lt
+        String ltRegister = Main.newVar();
+        String eqRegister = Main.newVar();
 
+        String lessTrueLabel = Main.newLabel();
+        String lessEndLabel = Main.newLabel();
+
+        String eqTrueLabel = Main.newLabel();
+        String eqEndLabel = Main.newLabel();
+
+        String trueLabel = Main.newLabel();
+        String falseLabel = Main.newLabel();
+        String endLabel = Main.newLabel();
+
+        String var = Main.newVar();
+
+        // Prepare ltRegister
+        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + lessTrueLabel + ";");
+        // Is not less
+        Main.out.println(ltRegister + " = 0;");
+        Main.out.println("goto " + lessEndLabel + ";");
+        Main.out.println(lessTrueLabel + ":");
+        Main.out.println(ltRegister + " = 1;");
+        Main.out.println(lessEndLabel + ":");
+
+        // Prepare eqRegister
+        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + eqTrueLabel + ";");
+        // Is not equal
+        Main.out.println(eqRegister + " = 0;");
+        Main.out.println("goto " + eqEndLabel + ";");
+
+        Main.out.println(eqTrueLabel + ":");
+        Main.out.println(eqRegister + " = 1;");
+        Main.out.println(eqEndLabel + ":");
+
+        Main.out.println("if (" + ltRegister + " == 1) goto " + trueLabel + ";");
+        Main.out.println("if (" + eqRegister + " == 1) goto " + trueLabel + ";");
+        // False code
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endLabel + ";");
+        // True code
+        Main.out.println(trueLabel + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println(endLabel + ":");
+        RESULT = var;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("condition",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

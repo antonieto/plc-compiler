@@ -155,7 +155,53 @@ condition ::= expression:e1 EQ expression:e2 {:
         Main.out.println(endL + ":");
         RESULT = var;
     :}
-    | expression LTEQ expression
+    | expression:e1 LTEQ expression:e2 {:
+        // First evaluate lt
+        String ltRegister = Main.newVar();
+        String eqRegister = Main.newVar();
+
+        String lessTrueLabel = Main.newLabel();
+        String lessEndLabel = Main.newLabel();
+
+        String eqTrueLabel = Main.newLabel();
+        String eqEndLabel = Main.newLabel();
+
+        String trueLabel = Main.newLabel();
+        String falseLabel = Main.newLabel();
+        String endLabel = Main.newLabel();
+
+        String var = Main.newVar();
+
+        // Prepare ltRegister
+        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + lessTrueLabel + ";");
+        // Is not less
+        Main.out.println(ltRegister + " = 0;");
+        Main.out.println("goto " + lessEndLabel + ";");
+        Main.out.println(lessTrueLabel + ":");
+        Main.out.println(ltRegister + " = 1;");
+        Main.out.println(lessEndLabel + ":");
+
+        // Prepare eqRegister
+        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + eqTrueLabel + ";");
+        // Is not equal
+        Main.out.println(eqRegister + " = 0;");
+        Main.out.println("goto " + eqEndLabel + ";");
+
+        Main.out.println(eqTrueLabel + ":");
+        Main.out.println(eqRegister + " = 1;");
+        Main.out.println(eqEndLabel + ":");
+
+        Main.out.println("if (" + ltRegister + " == 1) goto " + trueLabel + ";");
+        Main.out.println("if (" + eqRegister + " == 1) goto " + trueLabel + ";");
+        // False code
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endLabel + ";");
+        // True code
+        Main.out.println(trueLabel + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println(endLabel + ":");
+        RESULT = var;
+    :}
     | expression GT expression
     | expression:e1 GTEQ expression:e2 {:
          String var = Main.newVar();
