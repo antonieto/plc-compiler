@@ -20,8 +20,11 @@ terminal IDENT, INT;
 
 // ======================================
 // Now, nonterminals
-nonterminal statement_list, statement, condition, elseStatement;
-nonterminal String expression;
+nonterminal statement_list, statement, elseStatement;
+
+// These production rules return registers
+// condition: returns a register containing 0 or 1 (fale || true)
+nonterminal String expression, condition;
 // Util nonterminals
 nonterminal String nt_newVar, nt_newLabel;
 
@@ -37,15 +40,32 @@ statement_list ::= statement
     | statement_list statement;
 
 nt_newVar ::= {:
-    RESULT = Main.newVar();
+    String var = Main.newVar();
+    RESULT = var;
 :};
 
 nt_newLabel ::= {:
-    RESULT = Main.newLabel();
+    String label = Main.newLabel();
+    RESULT = label;
 :};
 
 statement ::= expression SEMI
-    | IF LPAR condition RPAR statement elseStatement
+    // if statement if ( condition ) statement else statement
+    | IF
+        nt_newLabel:ifLabel nt_newLabel:elseLabel nt_newLabel:endLabel
+        LPAR  condition:cond {:
+            // Go to elseLabel
+            Main.out.println("if (" + cond + " == 1" + ") goto " + ifLabel + ";");
+            Main.out.println("if (" + cond + " == 0" + ") goto " + elseLabel + ";");
+            Main.out.println(ifLabel + ":");
+        :} RPAR statement {:
+            // if-part was printed
+            Main.out.println("goto " + endLabel + ";");
+            Main.out.println(elseLabel + ":");
+        :} elseStatement {:
+            Main.out.println("goto " + endLabel + ";");
+            Main.out.println(endLabel + ":");
+        :}
     | WHILE LPAR condition RPAR statement
     | DO statement WHILE LPAR condition RPAR SEMI
     | FOR LPAR expression SEMI condition SEMI expression RPAR statement
@@ -80,13 +100,15 @@ expression ::= expression:v1 PLUS expression:v2 {:
         Main.out.println(var + " = " + e1 + " / " + e2 + ";");
         RESULT = var;
     :}
-    | MINUS expression %prec UMINUS// Unary minus (add precedence)
+    | MINUS expression:e1 {:
+        String var = Main.newVar();
+        Main.out.println(var + " = " + "0 - " + e1 + ";");
+        RESULT = var;
+    :} %prec UMINUS// Unary minus (add precedence)
     | LPAR expression:e {: RESULT = e; :} RPAR
     | IDENT:id ASIGN expression:e {:
-        String var = Main.newVar();
         Main.out.println(id + " = " + e + ";");
-        Main.out.println(var + " = " + e + ";");
-        RESULT = var;
+        RESULT = id.toString();
      :}
     | IDENT:id {: RESULT = id.toString(); :}
     | INT:val {:
@@ -95,13 +117,72 @@ expression ::= expression:v1 PLUS expression:v2 {:
         RESULT = var;
     :};
 
-condition ::= expression EQ expression
-    | expression NOTEQ expression
-    | expression LT expression
+condition ::= expression:e1 EQ expression:e2 {:
+        String var = Main.newVar();
+        String trueL = Main.newLabel();
+        String endL = Main.newLabel();
+        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + trueL + ";");
+        // False block first
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endL + ";");
+        Main.out.println(trueL + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println(endL + ":");
+        RESULT = var;
+    :}
+    | expression:e1 NOTEQ expression:e2 {:
+        String var = Main.newVar();
+        String trueL = Main.newLabel();
+        String endL = Main.newLabel();
+        Main.out.println("if (" + e1 + " != " + e2 + ") goto " + trueL + ";");
+        // False block first
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endL + ";");
+        Main.out.println(trueL + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println(endL + ":");
+        RESULT = var;
+    :}
+    | expression:e1 LT expression:e2 {:
+        String var = Main.newVar();
+        String trueL = Main.newLabel();
+        String endL = Main.newLabel();
+        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
+        // False block first
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endL + ";");
+        Main.out.println(trueL + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println(endL + ":");
+        RESULT = var;
+    :}
     | expression LTEQ expression
     | expression GT expression
-    | expression GTEQ expression
-    | NOT expression
+    | expression:e1 GTEQ expression:e2 {:
+         String var = Main.newVar();
+         String trueL = Main.newLabel();
+         String endL = Main.newLabel();
+         Main.out.println("if (" + e2 + " < " + e1 + ") goto " + trueL + ";");
+         // False block first
+         Main.out.println(var + " = 0;");
+         Main.out.println("goto " + endL + ";");
+         Main.out.println(trueL + ":");
+         Main.out.println(var + " = 1;");
+         Main.out.println(endL + ":");
+         RESULT = var;
+    :}
+    | NOT condition:c {:
+        String trueL = Main.newLabel();
+        String endL = Main.newLabel();
+        Main.out.println("if (" + c + " == 1) goto " + trueL + ";");
+        // False part
+        Main.out.println(c + " = 1;");
+        Main.out.println("goto " + endL + ";");
+        Main.out.println(trueL + ":");
+        Main.out.println(c + " = 0;");
+        Main.out.println(endL + ":");
+        RESULT = c;
+    :}
     | condition AND condition
     | condition OR condition
     | LPAR condition RPAR;

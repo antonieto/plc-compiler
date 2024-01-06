@@ -1,15 +1,48 @@
 $0 = 0;
-$1 = a * b;
+if (a == $0) goto L3;
+$1 = 0;
+goto L4;
+L3:
+$1 = 1;
+L4:
+if ($1 == 1) goto L0;
+if ($1 == 0) goto L1;
+L0:
+if (null == 1) goto L5;
+if (null == 0) goto L6;
+L5:
+$2 = a * b;
+if ($2 < c) goto L11;
+$3 = 0;
+goto L12;
+L11:
+$3 = 1;
+L12:
+if ($3 == 1) goto L8;
+if ($3 == 0) goto L9;
+L8:
 print c;
-$2 = 1;
-a = null;
-$3 = null;
+goto L10;
+L9:
+goto L10;
+L10:
+goto L7;
+L6:
+goto L7;
+L7:
 $4 = 1;
-b = null;
-$5 = null;
+$5 = 0 - $4;
+a = $5;
 $6 = 1;
-c = null;
-$7 = null;
-$8 = a * b;
-$9 = $8 * c;
-print $9;
+$7 = 0 - $6;
+b = $7;
+$8 = 1;
+$9 = 0 - $8;
+c = $9;
+goto L2;
+L1:
+goto L2;
+L2:
+$10 = a * b;
+$11 = $10 * c;
+print $11;

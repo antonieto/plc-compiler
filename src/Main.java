@@ -7,14 +7,14 @@ class Main {
     private static int varCount = 0;
     public static String newVar() {
         String var = "$" + varCount;
-        varCount++;
+        Main.varCount++;
         return var;
     }
 
     private static int labelCount = 0;
     public static String newLabel() {
-        String label = "$" + labelCount;
-        labelCount++;
+        String label = "L" + labelCount;
+        Main.labelCount++;
         return label;
     }
 

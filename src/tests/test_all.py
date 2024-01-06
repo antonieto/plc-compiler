@@ -68,7 +68,8 @@ def get_plc_out() -> list[Tuple[str, str]]:
         file = open(os.path.join(PLC_OUT_PATH, name), 'r', encoding='iso-8859-15')
         content = file.read()
         output.append((name, content))
-    
+    # Sort by name
+    output.sort(key=lambda x: x[0])
     return output
 
 
@@ -113,6 +114,7 @@ class TestAll:
         )
         name, _ = test_case
         name = name.split('.')[0]
+        print(f'Attempting: {name}')
         outputs = get_plc_out()
         for o_name, o_content in outputs:
             if o_name.startswith(name.split('.')[0]):
