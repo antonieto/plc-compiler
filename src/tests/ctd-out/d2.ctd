@@ -1,1 +1,60 @@
-instead expected token classes are [DO, FOR, PRINT, LPAR, LCURL, MINUS, IDENT, INT]
+$0 = 3;
+a = $0;
+$1 = 12;
+b = $1;
+$2 = 1;
+if (null == 0) goto L3;
+$3 = 5;
+if (null == 0) goto L3;
+goto L4;
+L4:
+$4 = 1;
+goto L5;
+L3:
+$4 = 0;
+goto L5;
+L5:
+if ($4 == 1) gotoL6;
+b = a;
+$5 = 10;
+if (null == 1) goto L6;
+goto L7;
+L6:
+$6 = 1;
+goto L6;
+L7:
+$6 = 0;
+goto L8;
+L8:
+if ($6 == 1) gotoL9;
+if (b == a) goto L10;
+$7 = 0;
+goto L11;
+L10:
+$7 = 1;
+L11:
+if ($7 == 1) goto L12;
+$7 = 1;
+goto L13;
+L12:
+$7 = 0;
+L13:
+if ($7 == 1) goto L9;
+goto L14;
+L9:
+$8 = 1;
+goto L9;
+L14:
+$8 = 0;
+goto L15;
+L15:
+if ($8 == 1) goto L0;
+if ($8 == 0) goto L1;
+L0:
+a = b;
+goto L2;
+L1:
+goto L2;
+L2:
+$9 = a * b;
+print $9;

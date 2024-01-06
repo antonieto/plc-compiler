@@ -23,6 +23,8 @@ print                                                 { return new Symbol(sym.PR
 \>\=                                                  { return new Symbol(sym.GTEQ);}
 \!                                                    { return new Symbol(sym.NOT);}
 \>\=                                                  { return new Symbol(sym.GTEQ);}
+\&\&                                                  { return new Symbol(sym.AND);}
+\|\|                                                  { return new Symbol(sym.OR);}
 \=                                                    { return new Symbol(sym.ASIGN); }
 \+                                                    { return new Symbol(sym.PLUS); }
 \-                                                    { return new Symbol(sym.MINUS); }

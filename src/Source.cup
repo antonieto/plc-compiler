@@ -35,18 +35,17 @@ precedence left UMINUS;
 precedence left ELSE;
 precedence left OR;
 precedence left AND;
+precedence left NOT;
 
 statement_list ::= statement
     | statement_list statement;
 
 nt_newVar ::= {:
-    String var = Main.newVar();
-    RESULT = var;
+    RESULT = Main.newVar();
 :};
 
 nt_newLabel ::= {:
-    String label = Main.newLabel();
-    RESULT = label;
+    RESULT = Main.newLabel();
 :};
 
 statement ::= expression SEMI
@@ -175,7 +174,7 @@ condition ::= expression:e1 EQ expression:e2 {:
         String trueL = Main.newLabel();
         String endL = Main.newLabel();
         Main.out.println("if (" + c + " == 1) goto " + trueL + ";");
-        // False part
+
         Main.out.println(c + " = 1;");
         Main.out.println("goto " + endL + ";");
         Main.out.println(trueL + ":");
@@ -183,6 +182,50 @@ condition ::= expression:e1 EQ expression:e2 {:
         Main.out.println(endL + ":");
         RESULT = c;
     :}
-    | condition AND condition
-    | condition OR condition
-    | LPAR condition RPAR;
+    |  condition:c1 AND nt_newLabel:fl {:
+        // Short circuit
+        Main.out.println("if (" + c1 + " == 0) goto " + fl + ";");
+    :} condition:c2 {:
+        String var = Main.newVar();
+        String trueLabel = Main.newLabel();
+        String endLabel = Main.newLabel();
+
+        Main.out.println("if (" + c2 + " == 0) goto " + fl + ";");
+        Main.out.println("goto " + trueLabel + ";");
+
+        // Labels and actions
+        Main.out.println(trueLabel + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println("goto " + endLabel + ";");
+
+        Main.out.println(fl + ":");
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endLabel + ";");
+
+        Main.out.println(endLabel + ":");
+        RESULT = var;
+    :}
+    | condition:c1 OR nt_newLabel:tl {:
+        // Short circuit
+        Main.out.println("if (" + c1 + " == 1) goto" + tl + ";");
+    :} condition:c2 {:
+        String var = Main.newVar();
+        String falseLabel = Main.newLabel();
+        String endLabel = Main.newLabel();
+
+        Main.out.println("if (" + c2 + " == 1) goto " + tl + ";");
+        Main.out.println("goto " + falseLabel + ";");
+
+        // Labels and actions
+        Main.out.println(tl + ":");
+        Main.out.println(var + " = 1;");
+        Main.out.println("goto " + tl + ";");
+
+        Main.out.println(falseLabel + ":");
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + endLabel + ";");
+
+        Main.out.println(endLabel + ":");
+        RESULT = var;
+    :}
+    | LPAR condition:c1 {: RESULT = c1; :} RPAR;
