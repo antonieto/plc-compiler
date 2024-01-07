@@ -106,7 +106,7 @@ class TestAll:
     def plc_to_ctd(self, compiler: Compiler, src_path: str, test_name: str) -> str:
         return compiler.compile(src_path=src_path, target_directory=f'{CTD_OUTPUT_PATH}{test_name}.ctd')
     
-    @pytest.mark.parametrize('test_case', get_plc_out())
+    @pytest.mark.parametrize('test_case', get_plc_out(), ids= lambda t: t[0])
     def test_one(self, test_case: Tuple[str, str]):
         compiler = Compiler(
                 path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ Main',

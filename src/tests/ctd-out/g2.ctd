@@ -1,3 +1,6 @@
+L0:
+L1:
+L2:
 $0 = suma + a;
 $1 = $0 + b;
 $2 = $1 + c;
@@ -6,30 +9,33 @@ $3 = 1;
 $4 = c + $3;
 c = $4;
 $5 = 10;
-if (c < $5) goto L0;
+if (c < $5) goto L3;
 $6 = 0;
-goto L1;
-L0:
+goto L4;
+L3:
 $6 = 1;
-L1:
+L4:
+if ($6 == 1) goto L2;
 $7 = 1;
 $8 = b + $7;
 b = $8;
 $9 = 10;
-if (b < $9) goto L2;
+if (b < $9) goto L5;
 $10 = 0;
-goto L3;
-L2:
+goto L6;
+L5:
 $10 = 1;
-L3:
+L6:
+if ($10 == 1) goto L1;
 $11 = 1;
 $12 = a + $11;
 a = $12;
 $13 = 10;
-if (a < $13) goto L4;
+if (a < $13) goto L7;
 $14 = 0;
-goto L5;
-L4:
+goto L8;
+L7:
 $14 = 1;
-L5:
+L8:
+if ($14 == 1) goto L0;
 print suma;

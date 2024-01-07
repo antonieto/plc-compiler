@@ -40,6 +40,7 @@ precedence left NOT;
 statement_list ::= statement
     | statement_list statement;
 
+// utils
 nt_newVar ::= {:
     RESULT = Main.newVar();
 :};
@@ -65,9 +66,35 @@ statement ::= expression SEMI
             Main.out.println("goto " + endLabel + ";");
             Main.out.println(endLabel + ":");
         :}
-    | WHILE LPAR condition RPAR statement
-    | DO statement WHILE LPAR condition RPAR SEMI
-    | FOR LPAR expression SEMI condition SEMI expression RPAR statement
+    | WHILE nt_newLabel:cond_label nt_newLabel:end_label LPAR {:
+        Main.out.println(cond_label + ":");
+    :} condition:c RPAR {:
+        Main.out.println("if (" + c + " == 0) goto " + end_label + ";");
+        // Same as do-while, switch execution
+    :} statement {:
+        Main.out.println("goto " + cond_label + ";");
+        Main.out.println(end_label + ":");
+    :}
+    | DO nt_newLabel:do_label {:
+        Main.out.println(do_label + ":");
+    :} statement WHILE LPAR condition:c {:
+        Main.out.println("if (" + c + " == 1) goto " + do_label + ";");
+    :} RPAR SEMI
+    | FOR LPAR expression:init_ex SEMI
+        nt_newLabel:cond_label nt_newLabel:do_label nt_newLabel:step_label nt_newLabel:end_label {:
+            Main.out.println(cond_label + ":");
+        :} condition:c {:
+            Main.out.println("if (" + c + " == 1) goto " + do_label + ";");
+            Main.out.println("goto " + end_label + ";");
+        :} SEMI {:
+            Main.out.println(step_label + ":");
+        :} expression:step_ex RPAR {:
+            Main.out.println("goto " + cond_label + ";");
+            Main.out.println(do_label + ":");
+        :} statement {:
+            Main.out.println("goto " + step_label + ";");
+            Main.out.println(end_label + ":");
+        :}
     | PRINT LPAR expression:v {:
         Main.out.print("print " + v + ";");
         Main.out.println();
@@ -156,63 +183,51 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 LTEQ expression:e2 {:
-        // First evaluate lt
-        String ltRegister = Main.newVar();
-        String eqRegister = Main.newVar();
-
-        String lessTrueLabel = Main.newLabel();
-        String lessEndLabel = Main.newLabel();
-
-        String eqTrueLabel = Main.newLabel();
-        String eqEndLabel = Main.newLabel();
-
-        String trueLabel = Main.newLabel();
-        String falseLabel = Main.newLabel();
-        String endLabel = Main.newLabel();
-
         String var = Main.newVar();
+        String tl = Main.newLabel();
+        String el = Main.newLabel();
 
-        // Prepare ltRegister
-        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + lessTrueLabel + ";");
-        // Is not less
-        Main.out.println(ltRegister + " = 0;");
-        Main.out.println("goto " + lessEndLabel + ";");
-        Main.out.println(lessTrueLabel + ":");
-        Main.out.println(ltRegister + " = 1;");
-        Main.out.println(lessEndLabel + ":");
-
-        // Prepare eqRegister
-        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + eqTrueLabel + ";");
-        // Is not equal
-        Main.out.println(eqRegister + " = 0;");
-        Main.out.println("goto " + eqEndLabel + ";");
-
-        Main.out.println(eqTrueLabel + ":");
-        Main.out.println(eqRegister + " = 1;");
-        Main.out.println(eqEndLabel + ":");
-
-        Main.out.println("if (" + ltRegister + " == 1) goto " + trueLabel + ";");
-        Main.out.println("if (" + eqRegister + " == 1) goto " + trueLabel + ";");
-        // False code
+        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + tl + ";");
+        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + tl + ";");
+        // False part
         Main.out.println(var + " = 0;");
-        Main.out.println("goto " + endLabel + ";");
-        // True code
-        Main.out.println(trueLabel + ":");
+        Main.out.println("goto " + el + ";");
+        // True part
+        Main.out.println(tl + ":");
         Main.out.println(var + " = 1;");
-        Main.out.println(endLabel + ":");
+        // End
+        Main.out.println(el + ":");
         RESULT = var;
     :}
-    | expression GT expression
+    | expression:e1 GT expression:e2 {:
+        String var = Main.newVar();
+        String fl = Main.newLabel();
+        String el = Main.newLabel();
+
+        Main.out.println("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
+        Main.out.println("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
+        // True part
+        Main.out.println(var + " = 0;");
+        Main.out.println("goto " + el + ";");
+        // False part
+        Main.out.println(fl + ":");
+        Main.out.println(var + " = 0;");
+        // End
+        Main.out.println(el + ":");
+        RESULT = var;
+    :}
     | expression:e1 GTEQ expression:e2 {:
          String var = Main.newVar();
          String trueL = Main.newLabel();
          String endL = Main.newLabel();
          Main.out.println("if (" + e2 + " < " + e1 + ") goto " + trueL + ";");
-         // False block first
+         // False block
          Main.out.println(var + " = 0;");
          Main.out.println("goto " + endL + ";");
+         // True block
          Main.out.println(trueL + ":");
          Main.out.println(var + " = 1;");
+         // End
          Main.out.println(endL + ":");
          RESULT = var;
     :}
@@ -243,7 +258,6 @@ condition ::= expression:e1 EQ expression:e2 {:
         Main.out.println(trueLabel + ":");
         Main.out.println(var + " = 1;");
         Main.out.println("goto " + endLabel + ";");
-
         Main.out.println(fl + ":");
         Main.out.println(var + " = 0;");
         Main.out.println("goto " + endLabel + ";");
@@ -253,7 +267,7 @@ condition ::= expression:e1 EQ expression:e2 {:
     :}
     | condition:c1 OR nt_newLabel:tl {:
         // Short circuit
-        Main.out.println("if (" + c1 + " == 1) goto" + tl + ";");
+        Main.out.println("if (" + c1 + " == 1) goto " + tl + ";");
     :} condition:c2 {:
         String var = Main.newVar();
         String falseLabel = Main.newLabel();
@@ -265,13 +279,14 @@ condition ::= expression:e1 EQ expression:e2 {:
         // Labels and actions
         Main.out.println(tl + ":");
         Main.out.println(var + " = 1;");
-        Main.out.println("goto " + tl + ";");
+        Main.out.println("goto " + endLabel + ";");
 
         Main.out.println(falseLabel + ":");
         Main.out.println(var + " = 0;");
-        Main.out.println("goto " + endLabel + ";");
 
         Main.out.println(endLabel + ":");
+
+        Main.out.println("#");
         RESULT = var;
     :}
     | LPAR condition:c1 {: RESULT = c1; :} RPAR;
