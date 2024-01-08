@@ -50,10 +50,9 @@ class Compiler():
 
     def compile(self, src_path: str, target_directory: Optional[str] = None) -> str:
         compile_cmd = f'{self.cmd_prefix} {self.path}' if self.cmd_prefix is not None else self.path
-        output = subprocess.check_output(f'{compile_cmd} {src_path}', shell=True)
-        out_str = output.decode(encoding='utf-8')
-        if target_directory:
-            file = open(target_directory, 'w+')
-            file.write(out_str)
-        return out_str
+        cmd = f'{compile_cmd} {src_path} {target_directory}'
+        print('CMD: ' + cmd)
+        subprocess.check_output(f'{compile_cmd} {src_path} {target_directory}', shell=True)
+        
+        return '' 
 

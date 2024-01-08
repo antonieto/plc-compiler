@@ -1,0 +1,40 @@
+$0 = 18;
+x = $0;
+$1 = 18;
+if (x == $1) goto L3;
+$2 = 0;
+goto L4;
+L3:
+$2 = 1;
+L4:
+if ($2 == 1) goto L0;
+if ($2 == 0) goto L1;
+L0:
+$3 = 10;
+i = $3;
+L5:
+$4 = 0;
+if (i < $4) goto L9;
+if (i == $4) goto L9;
+$5 = 1;
+goto L10;
+L9:
+$5 = 0;
+L10:
+if ($5 == 1) goto L6;
+goto L8;
+L7:
+$6 = 1;
+$7 = i - $6;
+i = $7;
+goto L5;
+L6:
+print x;
+goto L7;
+L8:
+goto L2;
+L1:
+goto L2;
+L2:
+$8 = 8;
+print $8;

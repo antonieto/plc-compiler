@@ -109,7 +109,7 @@ class TestAll:
     @pytest.mark.parametrize('test_case', get_plc_out(), ids= lambda t: t[0])
     def test_one(self, test_case: Tuple[str, str]):
         compiler = Compiler(
-                path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ Main',
+                path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ PLC',
             cmd_prefix=f'java -cp'
         )
         name, _ = test_case
