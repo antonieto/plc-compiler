@@ -1,0 +1,10 @@
+# ERROR: Se esta asignando un valor real a una variable entera
+   error;
+   halt;
+
+# ---------------- listado de la tabla de simbolos --------------------
+
+#                    x         1         INTEGER
+ 
+# ---------------------------------------------------------------------
+

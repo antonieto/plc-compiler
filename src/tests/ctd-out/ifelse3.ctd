@@ -1,0 +1,26 @@
+   x = 1;
+   if (a == b) goto L1;
+   goto L0;
+L0:
+   if (b == c) goto L3;
+   goto L4;
+L3:
+   $t0 = x + 2;
+   x = $t0;
+   goto L5;
+L4:
+   if (a == c) goto L6;
+   goto L7;
+L6:
+   $t1 = x + 3;
+   x = $t1;
+   goto L8;
+L7:
+   $t2 = x + 4;
+   x = $t2;
+L8:
+L5:
+   goto L2;
+L1:
+L2:
+   print x;

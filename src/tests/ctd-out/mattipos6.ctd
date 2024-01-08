@@ -1,0 +1,13 @@
+   $x_length = 3;
+   $t0[0] = 1.1;
+   $t0[1] = 2;
+# ERROR: Los tipos de los elementos de la matriz son diferentes
+   error;
+   halt;
+
+# ---------------- listado de la tabla de simbolos --------------------
+
+#                    x         1         ARRAY[3](REAL)
+ 
+# ---------------------------------------------------------------------
+

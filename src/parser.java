@@ -89,10 +89,10 @@ public class parser extends java_cup.runtime.lr_parser {
     "\ufff3\036\ufff3\037\ufff3\001\002\000\014\012\uffd5\021\uffd5" +
     "\033\uffd5\036\uffd5\037\uffd5\001\002\000\014\012\027\021" +
     "\004\033\026\036\007\037\005\001\002\000\012\013\uffd4" +
-    "\016\uffd4\034\032\035\uffd4\001\002\000\014\012\uffd7\021" +
+    "\016\uffd4\034\uffd4\035\uffd4\001\002\000\014\012\uffd7\021" +
     "\uffd7\033\uffd7\036\uffd7\037\uffd7\001\002\000\014\012\027" +
     "\021\004\033\026\036\007\037\005\001\002\000\012\013" +
-    "\uffd6\016\uffd6\034\uffd6\035\uffd6\001\002\000\012\012\011" +
+    "\uffd6\016\uffd6\034\uffd6\035\033\001\002\000\012\012\011" +
     "\021\004\036\007\037\005\001\002\000\012\012\011\021" +
     "\004\036\007\037\005\001\002\000\012\012\011\021\004" +
     "\036\007\037\005\001\002\000\012\012\011\021\004\036" +
@@ -397,7 +397,6 @@ class CUP$parser$actions {
 		int condright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String cond = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 
-            // Go to elseLabel
             PLC.out.println("if (" + cond + " == 1" + ") goto " + ifLabel + ";");
             PLC.out.println("if (" + cond + " == 0" + ") goto " + elseLabel + ";");
             PLC.out.println(ifLabel + ":");
@@ -423,7 +422,6 @@ class CUP$parser$actions {
 		int condright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		String cond = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 
-            // if-part was printed
             PLC.out.println("goto " + endLabel + ";");
             PLC.out.println(elseLabel + ":");
         
@@ -727,8 +725,7 @@ class CUP$parser$actions {
 		int vright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String v = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 
-        PLC.out.print("print " + v + ";");
-        PLC.out.println();
+        PLC.out.println("print " + v + ";");
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("NT$10",17, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1069,7 +1066,7 @@ class CUP$parser$actions {
         PLC.out.println("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
         PLC.out.println("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
         // True part
-        PLC.out.println(var + " = 0;");
+        PLC.out.println(var + " = 1;");
         PLC.out.println("goto " + el + ";");
         // False part
         PLC.out.println(fl + ":");
@@ -1096,13 +1093,13 @@ class CUP$parser$actions {
          String var = PLC.newVar();
          String trueL = PLC.newLabel();
          String endL = PLC.newLabel();
-         PLC.out.println("if (" + e2 + " < " + e1 + ") goto " + trueL + ";");
+         PLC.out.println("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
          // False block
-         PLC.out.println(var + " = 0;");
+         PLC.out.println(var + " = 1;");
          PLC.out.println("goto " + endL + ";");
          // True block
          PLC.out.println(trueL + ":");
-         PLC.out.println(var + " = 1;");
+         PLC.out.println(var + " = 0;");
          // End
          PLC.out.println(endL + ":");
          RESULT = var;
@@ -1122,7 +1119,6 @@ class CUP$parser$actions {
         String trueL = PLC.newLabel();
         String endL = PLC.newLabel();
         PLC.out.println("if (" + c + " == 1) goto " + trueL + ";");
-
         PLC.out.println(c + " = 1;");
         PLC.out.println("goto " + endL + ";");
         PLC.out.println(trueL + ":");

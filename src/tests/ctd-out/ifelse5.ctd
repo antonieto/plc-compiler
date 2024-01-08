@@ -1,0 +1,62 @@
+   x = 1;
+   if (a == b) goto L1;
+   goto L0;
+L0:
+   $t0 = x + 2;
+   x = $t0;
+   if (b == c) goto L3;
+   goto L4;
+L3:
+   $t1 = x + 3;
+   x = $t1;
+   goto L5;
+L4:
+L5:
+   if (a == b) goto L7;
+   goto L6;
+L6:
+   $t2 = x - 3;
+   x = $t2;
+   goto L8;
+L7:
+   $t3 = x + 8;
+   x = $t3;
+L8:
+   goto L2;
+L1:
+   if (a == c) goto L9;
+   goto L10;
+L9:
+   if (c == d) goto L13;
+   goto L12;
+L12:
+   $t4 = x + 4;
+   x = $t4;
+   goto L14;
+L13:
+   $t5 = x + 4;
+   x = $t5;
+   if (a == c) goto L15;
+   goto L16;
+L15:
+   $t6 = x + 5;
+   x = $t6;
+   goto L17;
+L16:
+   if (b == c) goto L18;
+   goto L19;
+L18:
+   $t7 = x + 6;
+   x = $t7;
+   goto L20;
+L19:
+   $t8 = x + 7;
+   x = $t8;
+L20:
+L17:
+L14:
+   goto L11;
+L10:
+L11:
+L2:
+   print x;

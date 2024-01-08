@@ -1,0 +1,34 @@
+   $n_length = 3;
+   if (0 < 0) goto L0;
+   if (3 < 0) goto L0;
+   if (3 == 0) goto L0;
+   goto L1;
+L0:
+   error;
+   halt;
+L1:
+   n[0] = 65;
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
+L2:
+   error;
+   halt;
+L3:
+   n[1] = 66;
+   if (2 < 0) goto L4;
+   if (3 < 2) goto L4;
+   if (3 == 2) goto L4;
+   goto L5;
+L4:
+   error;
+   halt;
+L5:
+   n[2] = 67;
+   $t0 = n[0];
+   printc $t0;
+   $t0 = n[1];
+   printc $t0;
+   $t0 = n[2];
+   printc $t0;

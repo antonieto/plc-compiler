@@ -1,17 +1,10 @@
-$0 = 0;
-i = $0;
+   i = 0;
 L0:
-$1 = 10;
-if (i < $1) goto L2;
-$2 = 0;
-goto L3;
-L2:
-$2 = 1;
-L3:
-if ($2 == 0) goto L1;
-print i;
-$3 = 1;
-$4 = i + $3;
-i = $4;
-goto L0;
+   if (i < 10) goto L1;
+   goto L2;
 L1:
+   print i;
+   $t0 = i + 1;
+   i = $t0;
+   goto L0;
+L2:

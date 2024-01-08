@@ -1,0 +1,12 @@
+   x = 67;
+# ERROR: Error de tipos
+   error;
+   halt;
+
+# ---------------- listado de la tabla de simbolos --------------------
+
+#                    a         1         CHAR
+#                    x         1         INTEGER
+ 
+# ---------------------------------------------------------------------
+

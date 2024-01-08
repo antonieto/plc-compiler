@@ -1,0 +1,30 @@
+L0:
+   if (a < 10) goto L1;
+   goto L2;
+L1:
+   $t0 = a + 1;
+   a = $t0;
+L3:
+   if (b < 10) goto L4;
+   goto L5;
+L4:
+   $t1 = b + 2;
+   b = $t1;
+   $t2 = suma + a;
+   $t3 = $t2 + b;
+   $t4 = $t3 + c;
+   suma = $t4;
+   goto L3;
+L5:
+   c = 15;
+L6:
+   if (c < 10) goto L7;
+   goto L8;
+L7:
+   $t5 = c + 1;
+   c = $t5;
+   goto L6;
+L8:
+   goto L0;
+L2:
+   print suma;

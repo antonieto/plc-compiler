@@ -1,0 +1,16 @@
+   if (1 < 2) goto L0;
+   goto L1;
+L0:
+   print 1;
+   goto L2;
+L1:
+   print 2;
+L2:
+   if (3 < 2) goto L3;
+   goto L4;
+L3:
+   print 3;
+   goto L5;
+L4:
+   print 4;
+L5:

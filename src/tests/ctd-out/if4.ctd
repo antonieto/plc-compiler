@@ -1,0 +1,23 @@
+   a = 1;
+   b = 2;
+   c = 3;
+   $t0 = a * b;
+   $t1 = b * c;
+   if ($t1 < $t0) goto L1;
+   goto L0;
+L0:
+   b = c;
+   a = c;
+   c = b;
+   if (c == b) goto L3;
+   goto L4;
+L3:
+   $t2 = a * b;
+   $t3 = $t2 * c;
+   print $t3;
+   goto L5;
+L4:
+L5:
+   goto L2;
+L1:
+L2:
