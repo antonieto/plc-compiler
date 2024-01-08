@@ -13,10 +13,10 @@ PLC_OUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/te
 CTD_OUTPUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd-out/'
 
 # Cup compilation
-CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.cup'
+CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLC.cup'
 
 # JFlex compilation
-JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.flex'
+JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLC.flex'
 
 # JAVAC Commands
 CUPPATH  = '/Users/antoniochairesmonroy/Applications/cup-0.11b/java-cup-11b-runtime.jar'
