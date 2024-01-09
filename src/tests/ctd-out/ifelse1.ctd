@@ -1,16 +1,38 @@
-   if (1 < 2) goto L0;
-   goto L1;
-L0:
-   print 1;
-   goto L2;
-L1:
-   print 2;
-L2:
-   if (3 < 2) goto L3;
-   goto L4;
+$0 = 1;
+$1 = 2;
+if ($0 < $1) goto L3;
+$2 = 0;
+goto L4;
 L3:
-   print 3;
-   goto L5;
+$2 = 1;
 L4:
-   print 4;
+if ($2 == 1) goto L0;
+if ($2 == 0) goto L1;
+L0:
+$3 = 1;
+print $3;
+goto L2;
+L1:
+$4 = 2;
+print $4;
+goto L2;
+L2:
+$5 = 3;
+$6 = 2;
+if ($5 < $6) goto L8;
+$7 = 0;
+goto L9;
+L8:
+$7 = 1;
+L9:
+if ($7 == 1) goto L5;
+if ($7 == 0) goto L6;
 L5:
+$8 = 3;
+print $8;
+goto L7;
+L6:
+$9 = 4;
+print $9;
+goto L7;
+L7:

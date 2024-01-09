@@ -23,18 +23,16 @@ public class PLXC {
 
     public static void main(String[] args) throws IOException {
         parser p = null;
-        if (args.length >= 1) {
+        if (args.length == 2) {
             p = new parser(new Yylex(new FileReader(args[0])));
-        }
-        if (args.length >= 2) {
             PLXC.out = new PrintStream(new FileOutputStream(args[1]));
         }
-
         try {
             if (p != null) {
                 p.parse();
             }
         } catch (Exception e){
+            System.out.println(e);
         }
     }
 }

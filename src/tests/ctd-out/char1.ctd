@@ -1,2 +1,2 @@
-   print 65;
-   printc 65;
+$0 = 65;
+print $0;

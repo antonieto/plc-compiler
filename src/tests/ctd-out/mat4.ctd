@@ -1,4 +1,2 @@
-   p = 10;
-# syntax error
-   error;
-   halt;
+$0 = 10;
+p = $0;

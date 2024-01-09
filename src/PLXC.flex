@@ -4,12 +4,15 @@ import java_cup.runtime.*;
 %cup
 
 %%
+int|char|float                                        { return new Symbol(sym.TYPE, yytext()); }
 if                                                    { return new Symbol(sym.IF); }
 else                                                  { return new Symbol(sym.ELSE); }
 while                                                 { return new Symbol(sym.WHILE); }
 do                                                    { return new Symbol(sym.DO); }
 for                                                   { return new Symbol(sym.FOR); }
 print                                                 { return new Symbol(sym.PRINT); }
+\[                                                    { return new Symbol(sym.LSQR); }
+\]                                                    { return new Symbol(sym.RSQR); }
 \{                                                    { return new Symbol(sym.LCURL); }
 \}                                                    { return new Symbol(sym.RCURL); }
 \(                                                    { return new Symbol(sym.LPAR); }

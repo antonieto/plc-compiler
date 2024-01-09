@@ -1,27 +1,12 @@
-   i = 1;
+$0 = 1;
+i = $0;
 L0:
-   if (i < 10) goto L1;
-   goto L2;
-L3:
-   goto L0;
-L1:
-   k = 2;
-   $t0 = i + 1;
-   i = $t0;
+$1 = 10;
+if (i < $1) goto L4;
+$2 = 0;
+goto L5;
 L4:
-   if (k < j) goto L6;
-   goto L5;
-L7:
-   goto L4;
+$2 = 1;
 L5:
-   $t1 = k * i;
-   k = $t1;
-   $t2 = x + i;
-   x = $t2;
-   $t3 = j + 1;
-   j = $t3;
-   goto L7;
-L6:
-   goto L3;
-L2:
-   print x;
+if ($2 == 1) goto L1;
+goto L3;

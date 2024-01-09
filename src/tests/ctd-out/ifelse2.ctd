@@ -1,18 +1,35 @@
-   x = 1;
-   if (a == b) goto L1;
-   goto L0;
-L0:
-   if (b == c) goto L3;
-   goto L4;
+$0 = 1;
+x = $0;
+if (a != b) goto L3;
+$1 = 0;
+goto L4;
 L3:
-   $t0 = x + 2;
-   x = $t0;
-   goto L5;
+$1 = 1;
 L4:
-   $t1 = x + 3;
-   x = $t1;
+if ($1 == 1) goto L0;
+if ($1 == 0) goto L1;
+L0:
+if (b == c) goto L8;
+$2 = 0;
+goto L9;
+L8:
+$2 = 1;
+L9:
+if ($2 == 1) goto L5;
+if ($2 == 0) goto L6;
 L5:
-   goto L2;
+$3 = 2;
+$4 = x + $3;
+x = $4;
+goto L7;
+L6:
+$5 = 3;
+$6 = x + $5;
+x = $6;
+goto L7;
+L7:
+goto L2;
 L1:
+goto L2;
 L2:
-   print x;
+print x;
