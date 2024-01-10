@@ -1,111 +1,111 @@
-$0 = 1;
-x = $0;
+$t0 = 1;
+x = (int) $t0;
 if (a != b) goto L3;
-$1 = 0;
+$t1 = 0;
 goto L4;
 L3:
-$1 = 1;
+$t1 = 1;
 L4:
-if ($1 == 1) goto L0;
-if ($1 == 0) goto L1;
+if ($t1 == 1) goto L0;
+if ($t1 == 0) goto L1;
 L0:
-$2 = 2;
-$3 = x + $2;
-x = $3;
+$t2 = 2;
+$t3 = x + $t2;
+x = (int) $t3;
 if (b == c) goto L8;
-$4 = 0;
+$t4 = 0;
 goto L9;
 L8:
-$4 = 1;
+$t4 = 1;
 L9:
-if ($4 == 1) goto L5;
-if ($4 == 0) goto L6;
+if ($t4 == 1) goto L5;
+if ($t4 == 0) goto L6;
 L5:
-$5 = 3;
-$6 = x + $5;
-x = $6;
+$t5 = 3;
+$t6 = x + $t5;
+x = (int) $t6;
 goto L7;
 L6:
 goto L7;
 L7:
 if (a != b) goto L13;
-$7 = 0;
+$t7 = 0;
 goto L14;
 L13:
-$7 = 1;
+$t7 = 1;
 L14:
-if ($7 == 1) goto L10;
-if ($7 == 0) goto L11;
+if ($t7 == 1) goto L10;
+if ($t7 == 0) goto L11;
 L10:
-$8 = 3;
-$9 = x - $8;
-x = $9;
+$t8 = 3;
+$t9 = x - $t8;
+x = (int) $t9;
 goto L12;
 L11:
-$10 = 8;
-$11 = x + $10;
-x = $11;
+$t10 = 8;
+$t11 = x + $t10;
+x = (int) $t11;
 goto L12;
 L12:
 goto L2;
 L1:
 if (a == c) goto L18;
-$12 = 0;
+$t12 = 0;
 goto L19;
 L18:
-$12 = 1;
+$t12 = 1;
 L19:
-if ($12 == 1) goto L15;
-if ($12 == 0) goto L16;
+if ($t12 == 1) goto L15;
+if ($t12 == 0) goto L16;
 L15:
 if (c != d) goto L23;
-$13 = 0;
+$t13 = 0;
 goto L24;
 L23:
-$13 = 1;
+$t13 = 1;
 L24:
-if ($13 == 1) goto L20;
-if ($13 == 0) goto L21;
+if ($t13 == 1) goto L20;
+if ($t13 == 0) goto L21;
 L20:
-$14 = 4;
-$15 = x + $14;
-x = $15;
+$t14 = 4;
+$t15 = x + $t14;
+x = (int) $t15;
 goto L22;
 L21:
-$16 = 4;
-$17 = x + $16;
-x = $17;
+$t16 = 4;
+$t17 = x + $t16;
+x = (int) $t17;
 if (a == c) goto L28;
-$18 = 0;
+$t18 = 0;
 goto L29;
 L28:
-$18 = 1;
+$t18 = 1;
 L29:
-if ($18 == 1) goto L25;
-if ($18 == 0) goto L26;
+if ($t18 == 1) goto L25;
+if ($t18 == 0) goto L26;
 L25:
-$19 = 5;
-$20 = x + $19;
-x = $20;
+$t19 = 5;
+$t20 = x + $t19;
+x = (int) $t20;
 goto L27;
 L26:
 if (b == c) goto L33;
-$21 = 0;
+$t21 = 0;
 goto L34;
 L33:
-$21 = 1;
+$t21 = 1;
 L34:
-if ($21 == 1) goto L30;
-if ($21 == 0) goto L31;
+if ($t21 == 1) goto L30;
+if ($t21 == 0) goto L31;
 L30:
-$22 = 6;
-$23 = x + $22;
-x = $23;
+$t22 = 6;
+$t23 = x + $t22;
+x = (int) $t23;
 goto L32;
 L31:
-$24 = 7;
-$25 = x + $24;
-x = $25;
+$t24 = 7;
+$t25 = x + $t24;
+x = (int) $t25;
 goto L32;
 L32:
 goto L27;

@@ -1,38 +1,38 @@
-$0 = 1;
-$1 = 2;
-if ($0 < $1) goto L3;
-$2 = 0;
+$t0 = 1;
+$t1 = 2;
+if ($t0 < $t1) goto L3;
+$t2 = 0;
 goto L4;
 L3:
-$2 = 1;
+$t2 = 1;
 L4:
-if ($2 == 1) goto L0;
-if ($2 == 0) goto L1;
+if ($t2 == 1) goto L0;
+if ($t2 == 0) goto L1;
 L0:
-$3 = 1;
-print $3;
+$t3 = 1;
+print $t3;
 goto L2;
 L1:
-$4 = 2;
-print $4;
+$t4 = 2;
+print $t4;
 goto L2;
 L2:
-$5 = 3;
-$6 = 2;
-if ($5 < $6) goto L8;
-$7 = 0;
+$t5 = 3;
+$t6 = 2;
+if ($t5 < $t6) goto L8;
+$t7 = 0;
 goto L9;
 L8:
-$7 = 1;
+$t7 = 1;
 L9:
-if ($7 == 1) goto L5;
-if ($7 == 0) goto L6;
+if ($t7 == 1) goto L5;
+if ($t7 == 0) goto L6;
 L5:
-$8 = 3;
-print $8;
+$t8 = 3;
+print $t8;
 goto L7;
 L6:
-$9 = 4;
-print $9;
+$t9 = 4;
+print $t9;
 goto L7;
 L7:

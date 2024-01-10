@@ -1,31 +1,31 @@
-$0 = 1;
-x = $0;
+$t0 = 1;
+x = (int) $t0;
 if (a != b) goto L3;
-$1 = 0;
+$t1 = 0;
 goto L4;
 L3:
-$1 = 1;
+$t1 = 1;
 L4:
-if ($1 == 1) goto L0;
-if ($1 == 0) goto L1;
+if ($t1 == 1) goto L0;
+if ($t1 == 0) goto L1;
 L0:
 if (b == c) goto L8;
-$2 = 0;
+$t2 = 0;
 goto L9;
 L8:
-$2 = 1;
+$t2 = 1;
 L9:
-if ($2 == 1) goto L5;
-if ($2 == 0) goto L6;
+if ($t2 == 1) goto L5;
+if ($t2 == 0) goto L6;
 L5:
-$3 = 2;
-$4 = x + $3;
-x = $4;
+$t3 = 2;
+$t4 = x + $t3;
+x = (int) $t4;
 goto L7;
 L6:
-$5 = 3;
-$6 = x + $5;
-x = $6;
+$t5 = 3;
+$t6 = x + $t5;
+x = (int) $t6;
 goto L7;
 L7:
 goto L2;

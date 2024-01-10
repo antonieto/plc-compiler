@@ -1,47 +1,47 @@
 L0:
-$0 = 10;
-if (b < $0) goto L2;
-$1 = 0;
+$t0 = 10;
+if (b < $t0) goto L2;
+$t1 = 0;
 goto L3;
 L2:
-$1 = 1;
+$t1 = 1;
 L3:
-if ($1 == 0) goto L1;
+if ($t1 == 0) goto L1;
 L4:
-$2 = 10;
-if (a < $2) goto L6;
-$3 = 0;
+$t2 = 10;
+if (a < $t2) goto L6;
+$t3 = 0;
 goto L7;
 L6:
-$3 = 1;
+$t3 = 1;
 L7:
-if ($3 == 0) goto L5;
+if ($t3 == 0) goto L5;
 L8:
-$4 = 10;
-if (a < $4) goto L10;
-$5 = 0;
+$t4 = 10;
+if (a < $t4) goto L10;
+$t5 = 0;
 goto L11;
 L10:
-$5 = 1;
+$t5 = 1;
 L11:
-if ($5 == 0) goto L9;
-$6 = suma + a;
-suma = $6;
-$7 = 1;
-$8 = a + $7;
-a = $8;
-$9 = a + b;
-print $9;
+if ($t5 == 0) goto L9;
+$t6 = suma + a;
+suma = (int) $t6;
+$t7 = 1;
+$t8 = a + $t7;
+a = (int) $t8;
+$t9 = a + b;
+print $t9;
 goto L8;
 L9:
 goto L4;
 L5:
-$10 = 2;
-$11 = b + $10;
-b = $11;
-$12 = suma + b;
-suma = $12;
-c = a;
+$t10 = 2;
+$t11 = b + $t10;
+b = (int) $t11;
+$t12 = suma + b;
+suma = (int) $t12;
+c = (int) a;
 goto L0;
 L1:
 print suma;

@@ -1,19 +1,19 @@
-$0 = 1;
-i = $0;
+$t0 = 1;
+i = (int) $t0;
 L0:
-$1 = 10;
-if (i < $1) goto L2;
-$2 = 0;
+$t1 = 10;
+if (i < $t1) goto L2;
+$t2 = 0;
 goto L3;
 L2:
-$2 = 1;
+$t2 = 1;
 L3:
-if ($2 == 0) goto L1;
-$3 = suma + i;
-suma = $3;
-$4 = 1;
-$5 = i + $4;
-i = $5;
+if ($t2 == 0) goto L1;
+$t3 = suma + i;
+suma = (int) $t3;
+$t4 = 1;
+$t5 = i + $t4;
+i = (int) $t5;
 goto L0;
 L1:
 print suma;

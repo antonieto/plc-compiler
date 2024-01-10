@@ -1,40 +1,40 @@
-$0 = 1;
-a = $0;
-$1 = 2;
-b = $1;
-$2 = 2;
-c = $2;
+$t0 = 1;
+a = (int) $t0;
+$t1 = 2;
+b = (int) $t1;
+$t2 = 2;
+c = (int) $t2;
 if (a < b) goto L3;
 if (a == b) goto L3;
-$3 = 0;
+$t3 = 0;
 goto L4;
 L3:
-$3 = 1;
+$t3 = 1;
 L4:
-if ($3 == 1) goto L0;
-if ($3 == 0) goto L1;
+if ($t3 == 1) goto L0;
+if ($t3 == 0) goto L1;
 L0:
 if (b < c) goto L8;
-$4 = 0;
+$t4 = 0;
 goto L9;
 L8:
-$4 = 1;
+$t4 = 1;
 L9:
-if ($4 == 1) goto L5;
-if ($4 == 0) goto L6;
+if ($t4 == 1) goto L5;
+if ($t4 == 0) goto L6;
 L5:
-$5 = a * b;
-print $5;
+$t5 = a * b;
+print $t5;
 goto L7;
 L6:
 goto L7;
 L7:
-$6 = b * c;
-print $6;
+$t6 = b * c;
+print $t6;
 goto L2;
 L1:
 goto L2;
 L2:
-$7 = a + b;
-$8 = $7 + c;
-print $8;
+$t7 = a + b;
+$t8 = $t7 + c;
+print $t8;

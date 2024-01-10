@@ -125,7 +125,7 @@ def get_plx_tests(specific: Optional[str]  = None) -> list[CompilerTestCase]:
         else:
             tests.append(case)
             
-    return tests
+    return sorted(tests, key=lambda x: x.name)
 
 class TestAll:
     """
@@ -161,7 +161,7 @@ class TestAll:
                 ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{name}.ctd')
                 assert ctd_output == o_content
 
-    @pytest.mark.parametrize('test_case', get_plx_tests('if5'), ids=lambda t: t.name)
+    @pytest.mark.parametrize('test_case', get_plx_tests('real1'), ids=lambda t: t.name)
     def test_plx(self, test_case: CompilerTestCase):
         compiler = Compiler( path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src PLXC',
             cmd_prefix='java -cp'

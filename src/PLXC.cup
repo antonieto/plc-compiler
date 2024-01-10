@@ -3,6 +3,7 @@ import lib.ExpressionSymbol;
 import lib.Type;
 import lib.SymTable;
 import lib.FloatType;
+import lib.IntType;
 import java.util.ArrayList;
 
 parser code {:
@@ -17,8 +18,8 @@ action code {:
     };
 
     void halt() {
-        PLXC.out.println("error;");
-        PLXC.out.println("halt;");
+        print("error;");
+        print("halt;");
     };
 
     boolean checkExistance(String name) {
@@ -28,7 +29,6 @@ action code {:
         }
         return true;
     };
-
 :}
 
 
@@ -51,7 +51,8 @@ nonterminal statement_list, statement, elseStatement, declStatement, forStatemen
 
 // These production rules return registers
 // condition: returns a register containing 0 or 1 (fale || true)
-nonterminal String expression, condition, forStepExpr;
+nonterminal String condition;
+nonterminal ExpressionSymbol expression, forStepExpr;
 
 // Declaration
 nonterminal ArrayList<String> declaration;
@@ -85,60 +86,59 @@ statement ::= expression SEMI
     | IF
         nt_newLabel:ifLabel nt_newLabel:elseLabel nt_newLabel:endLabel
         LPAR  condition:cond {:
-            PLXC.out.println("if (" + cond + " == 1" + ") goto " + ifLabel + ";");
-            PLXC.out.println("if (" + cond + " == 0" + ") goto " + elseLabel + ";");
-            PLXC.out.println(ifLabel + ":");
+            print("if (" + cond + " == 1" + ") goto " + ifLabel + ";");
+            print("if (" + cond + " == 0" + ") goto " + elseLabel + ";");
+            print(ifLabel + ":");
         :} RPAR statement {:
-            PLXC.out.println("goto " + endLabel + ";");
-            PLXC.out.println(elseLabel + ":");
+            print("goto " + endLabel + ";");
+            print(elseLabel + ":");
         :} elseStatement {:
-            PLXC.out.println("goto " + endLabel + ";");
-            PLXC.out.println(endLabel + ":");
+            print("goto " + endLabel + ";");
+            print(endLabel + ":");
         :}
     | WHILE nt_newLabel:cond_label nt_newLabel:end_label LPAR {:
-        PLXC.out.println(cond_label + ":");
+        print(cond_label + ":");
     :} condition:c RPAR {:
-        PLXC.out.println("if (" + c + " == 0) goto " + end_label + ";");
+        print("if (" + c + " == 0) goto " + end_label + ";");
         // Same as do-while, switch execution
     :} statement {:
-        PLXC.out.println("goto " + cond_label + ";");
-        PLXC.out.println(end_label + ":");
+        print("goto " + cond_label + ";");
+        print(end_label + ":");
     :}
     | DO nt_newLabel:do_label {:
-        PLXC.out.println(do_label + ":");
+        print(do_label + ":");
     :} statement WHILE LPAR condition:c {:
-        PLXC.out.println("if (" + c + " == 1) goto " + do_label + ";");
+        print("if (" + c + " == 1) goto " + do_label + ";");
     :} RPAR SEMI
     | forStatement
     | PRINT LPAR expression:v {:
-        PLXC.out.println("print " + v + ";");
+        print("print " + v + ";");
     :} RPAR SEMI
     | LCURL statement_list RCURL;
 
 // Resolve IF ELSE
 elseStatement ::= | ELSE statement;
 
-forStatement ::= FOR LPAR forStepExpr:init_ex SEMI
+forStatement ::= FOR LPAR forStepExpr SEMI
     nt_newLabel:cond_label nt_newLabel:do_label nt_newLabel:step_label nt_newLabel:end_label {:
-        PLXC.out.println(cond_label + ":");
+        print(cond_label + ":");
     :} condition:c {:
-        PLXC.out.println("if (" + c + " == 1) goto " + do_label + ";");
-        PLXC.out.println("goto " + end_label + ";");
+        print("if (" + c + " == 1) goto " + do_label + ";");
+        print("goto " + end_label + ";");
     :} SEMI {:
-        PLXC.out.println(step_label + ":");
-    :} forStepExpr:step_ex RPAR {:
-     PLXC.out.println("goto " + cond_label + ";");
-     PLXC.out.println(do_label + ":");
+        print(step_label + ":");
+    :} forStepExpr RPAR {:
+        print("goto " + cond_label + ";");
+        print(do_label + ":");
     :} statement {:
-     PLXC.out.println("goto " + step_label + ";");
-     PLXC.out.println(end_label + ":");
+        print("goto " + step_label + ";");
+        print(end_label + ":");
 :};
 
 forStepExpr ::= expression | ;
 
 
 declStatement ::= TYPE:t declaration:ids {:
-    // Insert all ids into sym table
     for (String id: ids) {
         Type type = Type.getType(t.toString());
         SymTable.add(id, new ExpressionSymbol(id, type));
@@ -169,120 +169,130 @@ declaration ::= IDENT:id {:
 
 // Expression definition
 expression ::= expression:e1 PLUS expression:e2 {:
-        checkExistance(e1);
-        checkExistance(e2);
-        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
-        if (!s1.isCompatibleWith(s2)) {
+        if (!e1.isCompatibleWith(e2)) {
             halt();
         }
-        Type t = s1.getType();
+        Type t1 = e1.getType();
+        Type t2 = e2.getType();
+        Type floatType = FloatType.getInstance();
+        // Prioritize float
+        Type t = t1 == floatType || t2 == floatType ? floatType : e1.getType();
         ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
-        String line = t.addOperation(dest, s1, s2);
+        String line = t.addOperation(dest, e1, e2);
         print(line);
-        RESULT = dest.getName();
+        RESULT = dest;
     :}
     | expression:e1 MINUS expression:e2 {:
-        checkExistance(e1);
-        checkExistance(e2);
-        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
-        if (!s1.isCompatibleWith(s2)) {
+        if (!e1.isCompatibleWith(e2)) {
             halt();
         }
-        Type t = s1.getType();
+        Type t = e1.getType();
         ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
-        String line = t.subsOperation(dest, s1, s2);
+        String line = t.subsOperation(dest, e1, e2);
         print(line);
-        RESULT = dest.getName();
+        RESULT = dest;
     :}
     | expression:e1 TIMES expression:e2 {:
-        checkExistance(e1);
-        checkExistance(e2);
-        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
-        print("# trying compatibility of " + e1 + " and " + e2);
-        if (!s1.isCompatibleWith(s2)) {
+        if (!e1.isCompatibleWith(e2)) {
             halt();
         }
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
-        String line = s1.getType().multOperation(dest, s1, s2);
+        Type t = e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        String line = t.multOperation(dest, e1, e2);
         print(line);
-        RESULT = dest.getName();
+        RESULT = dest;
     :}
     | expression:e1 DIVIDE expression:e2 {:
-        checkExistance(e1);
-        checkExistance(e2);
-        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
-        if (!s1.isCompatibleWith(s2)) {
+        if (!e1.isCompatibleWith(e2)) {
             halt();
         }
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
-        String line = s1.getType().divideOperation(dest, s1, s2);
+        Type t = e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        String line = e1.getType().divideOperation(dest, e1, e2);
         print(line);
-        RESULT = dest.getName();
+        RESULT = dest;
     :}
     | MINUS expression:e1 {:
-        checkExistance(e1);
-        ExpressionSymbol s1 = SymTable.get(e1);
-        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), s1.getType());
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
+        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), e1.getType());
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), e1.getType());
         print(tmp + " = 0;");
-        Type t = s1.getType();
-        String line = t.subsOperation(dest, tmp, s1);
-        RESULT = dest.getName();
+        Type t = e1.getType();
+        String line = t.subsOperation(dest, tmp, e1);
+        print(line);
+        RESULT = dest;
     :} %prec UMINUS// Unary minus (add precedence)
     | LPAR expression:e {: RESULT = e; :} RPAR
     | IDENT:id ASIGN expression:e {:
-        PLXC.out.println(id + " = " + e + ";");
-        RESULT = e;
+        if (!SymTable.has(id.toString())) {
+            halt();
+            RESULT = e;
+        }
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        Type t = sym.getType();
+        if (t == IntType.getInstance()) {
+            // Type cast
+            print(sym + " = (int) " + e + ";");
+            RESULT = e;
+        } else {
+            print(sym + " = " + e + ";");
+            RESULT = e;
+        }
+
      :}
-    | IDENT:id {: RESULT = id.toString(); :}
+    | IDENT:id {:
+        if(!SymTable.has(id.toString())) {
+            halt();
+        }
+        RESULT = SymTable.get(id.toString());
+    :}
     | INT:val {:
         String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + val + ";");
-        RESULT = var;
+        print(var + " = " + val + ";");
+        RESULT = new ExpressionSymbol(var, IntType.getInstance());
     :}
     | FLOAT:val {:
         String var = PLXC.newVar();
         print(var + " = " + val + ";");
-        RESULT = var;
+        RESULT = new ExpressionSymbol(var, FloatType.getInstance());
     :};
 
 condition ::= expression:e1 EQ expression:e2 {:
         String var = PLXC.newVar();
         String trueL = PLXC.newLabel();
         String endL = PLXC.newLabel();
-        PLXC.out.println("if (" + e1 + " == " + e2 + ") goto " + trueL + ";");
+        print("if (" + e1 + " == " + e2 + ") goto " + trueL + ";");
         // False block first
-        PLXC.out.println(var + " = 0;");
-        PLXC.out.println("goto " + endL + ";");
-        PLXC.out.println(trueL + ":");
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println(endL + ":");
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
         RESULT = var;
     :}
     | expression:e1 NOTEQ expression:e2 {:
         String var = PLXC.newVar();
         String trueL = PLXC.newLabel();
         String endL = PLXC.newLabel();
-        PLXC.out.println("if (" + e1 + " != " + e2 + ") goto " + trueL + ";");
+        print("if (" + e1 + " != " + e2 + ") goto " + trueL + ";");
         // False block first
-        PLXC.out.println(var + " = 0;");
-        PLXC.out.println("goto " + endL + ";");
-        PLXC.out.println(trueL + ":");
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println(endL + ":");
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
         RESULT = var;
     :}
     | expression:e1 LT expression:e2 {:
         String var = PLXC.newVar();
         String trueL = PLXC.newLabel();
         String endL = PLXC.newLabel();
-        PLXC.out.println("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
+        print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
         // False block first
-        PLXC.out.println(var + " = 0;");
-        PLXC.out.println("goto " + endL + ";");
-        PLXC.out.println(trueL + ":");
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println(endL + ":");
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
         RESULT = var;
     :}
     | expression:e1 LTEQ expression:e2 {:
@@ -290,16 +300,16 @@ condition ::= expression:e1 EQ expression:e2 {:
         String tl = PLXC.newLabel();
         String el = PLXC.newLabel();
 
-        PLXC.out.println("if (" + e1 + " < " + e2 + ") goto " + tl + ";");
-        PLXC.out.println("if (" + e1 + " == " + e2 + ") goto " + tl + ";");
+        print("if (" + e1 + " < " + e2 + ") goto " + tl + ";");
+        print("if (" + e1 + " == " + e2 + ") goto " + tl + ";");
         // False part
-        PLXC.out.println(var + " = 0;");
-        PLXC.out.println("goto " + el + ";");
+        print(var + " = 0;");
+        print("goto " + el + ";");
         // True part
-        PLXC.out.println(tl + ":");
-        PLXC.out.println(var + " = 1;");
+        print(tl + ":");
+        print(var + " = 1;");
         // End
-        PLXC.out.println(el + ":");
+        print(el + ":");
         RESULT = var;
     :}
     | expression:e1 GT expression:e2 {:
@@ -307,86 +317,86 @@ condition ::= expression:e1 EQ expression:e2 {:
         String fl = PLXC.newLabel();
         String el = PLXC.newLabel();
 
-        PLXC.out.println("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
-        PLXC.out.println("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
+        print("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
+        print("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
         // True part
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println("goto " + el + ";");
+        print(var + " = 1;");
+        print("goto " + el + ";");
         // False part
-        PLXC.out.println(fl + ":");
-        PLXC.out.println(var + " = 0;");
+        print(fl + ":");
+        print(var + " = 0;");
         // End
-        PLXC.out.println(el + ":");
+        print(el + ":");
         RESULT = var;
     :}
     | expression:e1 GTEQ expression:e2 {:
          String var = PLXC.newVar();
          String trueL = PLXC.newLabel();
          String endL = PLXC.newLabel();
-         PLXC.out.println("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
+         print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
          // False block
-         PLXC.out.println(var + " = 1;");
-         PLXC.out.println("goto " + endL + ";");
+         print(var + " = 1;");
+         print("goto " + endL + ";");
          // True block
-         PLXC.out.println(trueL + ":");
-         PLXC.out.println(var + " = 0;");
+         print(trueL + ":");
+         print(var + " = 0;");
          // End
-         PLXC.out.println(endL + ":");
+         print(endL + ":");
          RESULT = var;
     :}
     | NOT condition:c {:
         String trueL = PLXC.newLabel();
         String endL = PLXC.newLabel();
-        PLXC.out.println("if (" + c + " == 1) goto " + trueL + ";");
-        PLXC.out.println(c + " = 1;");
-        PLXC.out.println("goto " + endL + ";");
-        PLXC.out.println(trueL + ":");
-        PLXC.out.println(c + " = 0;");
-        PLXC.out.println(endL + ":");
+        print("if (" + c + " == 1) goto " + trueL + ";");
+        print(c + " = 1;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(c + " = 0;");
+        print(endL + ":");
         RESULT = c;
     :}
     |  condition:c1 AND nt_newLabel:fl {:
         // Short circuit
-        PLXC.out.println("if (" + c1 + " == 0) goto " + fl + ";");
+        print("if (" + c1 + " == 0) goto " + fl + ";");
     :} condition:c2 {:
         String var = PLXC.newVar();
         String trueLabel = PLXC.newLabel();
         String endLabel = PLXC.newLabel();
 
-        PLXC.out.println("if (" + c2 + " == 0) goto " + fl + ";");
-        PLXC.out.println("goto " + trueLabel + ";");
+        print("if (" + c2 + " == 0) goto " + fl + ";");
+        print("goto " + trueLabel + ";");
 
         // Labels and actions
-        PLXC.out.println(trueLabel + ":");
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println("goto " + endLabel + ";");
-        PLXC.out.println(fl + ":");
-        PLXC.out.println(var + " = 0;");
-        PLXC.out.println("goto " + endLabel + ";");
+        print(trueLabel + ":");
+        print(var + " = 1;");
+        print("goto " + endLabel + ";");
+        print(fl + ":");
+        print(var + " = 0;");
+        print("goto " + endLabel + ";");
 
-        PLXC.out.println(endLabel + ":");
+        print(endLabel + ":");
         RESULT = var;
     :}
     | condition:c1 OR nt_newLabel:tl {:
         // Short circuit
-        PLXC.out.println("if (" + c1 + " == 1) goto " + tl + ";");
+        print("if (" + c1 + " == 1) goto " + tl + ";");
     :} condition:c2 {:
         String var = PLXC.newVar();
         String falseLabel = PLXC.newLabel();
         String endLabel = PLXC.newLabel();
 
-        PLXC.out.println("if (" + c2 + " == 1) goto " + tl + ";");
-        PLXC.out.println("goto " + falseLabel + ";");
+        print("if (" + c2 + " == 1) goto " + tl + ";");
+        print("goto " + falseLabel + ";");
 
         // Labels and actions
-        PLXC.out.println(tl + ":");
-        PLXC.out.println(var + " = 1;");
-        PLXC.out.println("goto " + endLabel + ";");
+        print(tl + ":");
+        print(var + " = 1;");
+        print("goto " + endLabel + ";");
 
-        PLXC.out.println(falseLabel + ":");
-        PLXC.out.println(var + " = 0;");
+        print(falseLabel + ":");
+        print(var + " = 0;");
 
-        PLXC.out.println(endLabel + ":");
+        print(endLabel + ":");
         RESULT = var;
     :}
     | LPAR condition:c1 {: RESULT = c1; :} RPAR;

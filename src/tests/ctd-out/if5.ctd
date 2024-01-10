@@ -1,9 +1,9 @@
 $t0 = 1;
-a = $t0;
+a = (int) $t0;
 $t1 = 2;
-b = $t1;
+b = (int) $t1;
 $t2 = 3;
-c = $t2;
+c = (int) $t2;
 if (a < b) goto L3;
 $t3 = 0;
 goto L4;
@@ -115,6 +115,96 @@ L39:
 if ($t16 == 1) goto L35;
 if ($t16 == 0) goto L36;
 L35:
-# trying compatibilit of a and b
 $t17 = a * b;
-# trying compatibilit of $t17 and c
+$t18 = $t17 * c;
+print $t18;
+goto L37;
+L36:
+goto L37;
+L37:
+if (b == c) goto L43;
+$t19 = 0;
+goto L44;
+L43:
+$t19 = 1;
+L44:
+if ($t19 == 1) goto L40;
+if ($t19 == 0) goto L41;
+L40:
+$t20 = b * c;
+print $t20;
+if (b != c) goto L48;
+$t21 = 0;
+goto L49;
+L48:
+$t21 = 1;
+L49:
+if ($t21 == 1) goto L45;
+if ($t21 == 0) goto L46;
+L45:
+$t22 = 2;
+a = (int) $t22;
+goto L47;
+L46:
+goto L47;
+L47:
+$t23 = 7;
+c = (int) $t23;
+if (a < b) goto L53;
+if (a == b) goto L53;
+$t24 = 0;
+goto L54;
+L53:
+$t24 = 1;
+L54:
+if ($t24 == 1) goto L50;
+if ($t24 == 0) goto L51;
+L50:
+if (b < c) goto L58;
+$t25 = 0;
+goto L59;
+L58:
+$t25 = 1;
+L59:
+if ($t25 == 1) goto L55;
+if ($t25 == 0) goto L56;
+L55:
+if (c != b) goto L63;
+$t26 = 0;
+goto L64;
+L63:
+$t26 = 1;
+L64:
+if ($t26 == 1) goto L60;
+if ($t26 == 0) goto L61;
+L60:
+$t27 = 5;
+b = (int) $t27;
+goto L62;
+L61:
+goto L62;
+L62:
+goto L57;
+L56:
+goto L57;
+L57:
+goto L52;
+L51:
+goto L52;
+L52:
+goto L42;
+L41:
+goto L42;
+L42:
+$t28 = 6;
+a = (int) $t28;
+goto L32;
+L31:
+goto L32;
+L32:
+$t29 = a + b;
+$t30 = $t29 + c;
+$t31 = a * b;
+$t32 = $t31 * c;
+$t33 = $t30 + $t32;
+print $t33;

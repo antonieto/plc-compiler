@@ -1,61 +1,64 @@
-$0 = 1;
-a = $0;
-$1 = 2;
-b = $1;
-$2 = 3;
-c = $2;
-$3 = 0;
-if (a == $3) goto L3;
-$4 = 0;
+$t0 = 1;
+a = (int) $t0;
+$t1 = 2;
+b = (int) $t1;
+$t2 = 3;
+c = (int) $t2;
+$t3 = 0;
+if (a == $t3) goto L3;
+$t4 = 0;
 goto L4;
 L3:
-$4 = 1;
+$t4 = 1;
 L4:
-if ($4 == 1) goto L0;
-if ($4 == 0) goto L1;
+if ($t4 == 1) goto L0;
+if ($t4 == 0) goto L1;
 L0:
-$5 = 1;
-$6 = 0 - $5;
-a = $6;
+$t5 = 1;
+$t6 = 0;
+$t7 = $t6 - $t5;
+a = (int) $t7;
 if (a < b) goto L8;
 if (a == b) goto L8;
-$7 = 0;
+$t8 = 0;
 goto L9;
 L8:
-$7 = 1;
+$t8 = 1;
 L9:
-if ($7 == 1) goto L5;
-if ($7 == 0) goto L6;
+if ($t8 == 1) goto L5;
+if ($t8 == 0) goto L6;
 L5:
-$8 = a * b;
-if (c < $8) goto L13;
-$9 = 1;
+$t9 = a * b;
+if (c < $t9) goto L13;
+$t10 = 1;
 goto L14;
 L13:
-$9 = 0;
+$t10 = 0;
 L14:
-if ($9 == 1) goto L10;
-if ($9 == 0) goto L11;
+if ($t10 == 1) goto L10;
+if ($t10 == 0) goto L11;
 L10:
 print c;
 goto L12;
 L11:
 goto L12;
 L12:
-$10 = 1;
-$11 = 0 - $10;
-b = $11;
+$t11 = 1;
+$t12 = 0;
+$t13 = $t12 - $t11;
+b = (int) $t13;
 goto L7;
 L6:
 goto L7;
 L7:
-$12 = 1;
-$13 = 0 - $12;
-c = $13;
+$t14 = 1;
+$t15 = 0;
+$t16 = $t15 - $t14;
+c = (int) $t16;
 goto L2;
 L1:
 goto L2;
 L2:
-$14 = a * b;
-$15 = $14 * c;
-print $15;
+$t17 = a * b;
+$t18 = $t17 * c;
+print $t18;
