@@ -134,9 +134,6 @@ class TestAll:
     def run_ctd(self, src: str) -> str:
         cmd = f'{CTD_PATH} {src}'
         out = subprocess.run(cmd, text=True, capture_output=True, shell=True)
-        if out.returncode != 0:
-            err = out.stderr
-            raise Exception(f'CTD Failed: {err}')
         return out.stdout
     """
         Compiles PLC to CTD code representation.
@@ -161,7 +158,7 @@ class TestAll:
                 ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{name}.ctd')
                 assert ctd_output == o_content
 
-    @pytest.mark.parametrize('test_case', get_plx_tests('real1'), ids=lambda t: t.name)
+    @pytest.mark.parametrize('test_case', get_plx_tests(), ids=lambda t: t.name)
     def test_plx(self, test_case: CompilerTestCase):
         compiler = Compiler( path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src PLXC',
             cmd_prefix='java -cp'

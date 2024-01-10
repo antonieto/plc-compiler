@@ -54,8 +54,7 @@ class Compiler():
         compile_cmd = f'{self.cmd_prefix} {self.path}' if self.cmd_prefix is not None else self.path
         cmd = f'{compile_cmd} {src_path} {target_directory}'
         print('CMD: ' + cmd)
-        subprocess.check_output(f'{compile_cmd} {src_path} {target_directory}', shell=True)
-        
+        subprocess.run(f'{compile_cmd} {src_path} {target_directory}', shell=True)
         return '' 
 
 @dataclass

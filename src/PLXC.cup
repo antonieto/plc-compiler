@@ -221,6 +221,13 @@ expression ::= expression:e1 PLUS expression:e2 {:
         print(line);
         RESULT = dest;
     :} %prec UMINUS// Unary minus (add precedence)
+    | LPAR TYPE:t RPAR expression:e1 {:
+        Type type = Type.getType(t.toString());
+        ExpressionSymbol temp = new ExpressionSymbol(PLXC.newVar(), type);
+        String line = type.castOperation(temp, e1);
+        print(line);
+        RESULT = temp;
+    :}
     | LPAR expression:e {: RESULT = e; :} RPAR
     | IDENT:id ASIGN expression:e {:
         if (!SymTable.has(id.toString())) {
@@ -229,12 +236,11 @@ expression ::= expression:e1 PLUS expression:e2 {:
         }
         ExpressionSymbol sym = SymTable.get(id.toString());
         Type t = sym.getType();
-        if (t == IntType.getInstance()) {
-            // Type cast
-            print(sym + " = (int) " + e + ";");
+        if (!sym.isCompatibleWith(e)) {
+            halt();
             RESULT = e;
         } else {
-            print(sym + " = " + e + ";");
+            print(t.castOperation(sym, e));
             RESULT = e;
         }
 
