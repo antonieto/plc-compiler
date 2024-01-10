@@ -6,39 +6,41 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int TIMES = 19;
-  public static final int AND = 28;
+  public static final int TIMES = 20;
+  public static final int AND = 29;
   public static final int LSQR = 12;
-  public static final int LT = 23;
-  public static final int IDENT = 30;
+  public static final int LT = 24;
+  public static final int IDENT = 31;
   public static final int ELSE = 3;
-  public static final int NOTEQ = 22;
-  public static final int PLUS = 16;
-  public static final int INT = 31;
-  public static final int OR = 29;
+  public static final int NOTEQ = 23;
+  public static final int PLUS = 17;
+  public static final int INT = 32;
+  public static final int OR = 30;
   public static final int LCURL = 10;
   public static final int SEMI = 14;
   public static final int WHILE = 4;
-  public static final int NOT = 27;
+  public static final int NOT = 28;
   public static final int IF = 2;
-  public static final int ASIGN = 15;
-  public static final int GT = 25;
+  public static final int ASIGN = 16;
+  public static final int GT = 26;
   public static final int DO = 5;
-  public static final int TYPE = 32;
-  public static final int LTEQ = 24;
+  public static final int TYPE = 33;
+  public static final int COMA = 15;
+  public static final int FLOAT = 34;
+  public static final int LTEQ = 25;
   public static final int EOF = 0;
-  public static final int DIVIDE = 20;
-  public static final int MINUS = 17;
+  public static final int DIVIDE = 21;
+  public static final int MINUS = 18;
   public static final int PRINT = 7;
   public static final int error = 1;
-  public static final int EQ = 21;
-  public static final int GTEQ = 26;
+  public static final int EQ = 22;
+  public static final int GTEQ = 27;
   public static final int RPAR = 9;
   public static final int FOR = 6;
   public static final int RCURL = 11;
   public static final int RSQR = 13;
   public static final int LPAR = 8;
-  public static final int UMINUS = 18;
+  public static final int UMINUS = 19;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -55,6 +57,7 @@ public class sym {
   "LSQR",
   "RSQR",
   "SEMI",
+  "COMA",
   "ASIGN",
   "PLUS",
   "MINUS",
@@ -72,7 +75,8 @@ public class sym {
   "OR",
   "IDENT",
   "INT",
-  "TYPE"
+  "TYPE",
+  "FLOAT"
   };
 }
 

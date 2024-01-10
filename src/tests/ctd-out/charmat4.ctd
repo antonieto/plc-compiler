@@ -5,10 +5,3 @@
 # ERROR: Las dimensiones de los arrays no encajan
    error;
    halt;
-
-# ---------------- listado de la tabla de simbolos --------------------
-
-#                   st         1         ARRAY[2](CHAR)
- 
-# ---------------------------------------------------------------------
-

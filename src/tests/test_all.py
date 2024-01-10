@@ -1,6 +1,6 @@
 import os
 import subprocess
-from typing import Tuple
+from typing import Optional, Tuple
 import pytest
 from case import Compiler, CompilerAssembler, CompilerTestCase
 from rich.console import Console
@@ -26,7 +26,8 @@ PLXC_JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_fi
 
 # JAVAC Commands
 CUPPATH  = '/Users/antoniochairesmonroy/Applications/cup-0.11b/java-cup-11b-runtime.jar'
-JAVA_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/*/*.java'
+JAVA_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/*.java'
+LIB_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/lib/*.java'
 
 
 CTD_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd'
@@ -54,7 +55,7 @@ def jflex_action(src: str):
     return action
 
 def javac_action():
-    output = subprocess.run(f'javac -d {OUTPUT_PATH} -cp {CUPPATH}:. {JAVA_SOURCE}', shell=True, capture_output=True, text=True)
+    output = subprocess.run(f'javac -d {OUTPUT_PATH} -cp {CUPPATH} {JAVA_SOURCE} {LIB_SOURCE}', shell=True, capture_output=True, text=True)
     if output.returncode != 0:
         raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
 
@@ -105,18 +106,25 @@ def prepare():
     plx_assembler.assemble()
     yield
 
-def get_plx_tests() -> list[CompilerTestCase]:
+@functools.cache
+def get_plx_tests(specific: Optional[str]  = None) -> list[CompilerTestCase]:
     tests = []
     # Walk plx-test path and build
     for name in os.listdir(PLX_TEST_PATH):
         real_name = name
         name = name.split('.')[0]
-        tests.append(CompilerTestCase(
+        case = CompilerTestCase(
             name=name,
             source_path=os.path.join(PLX_TEST_PATH, real_name),
             ctd_path=os.path.join(CTD_OUTPUT_PATH, name + '.ctd'),
             expected_output_path=os.path.join(PLX_OUT_PATH, name + '.plxout')
-            ))
+        )
+        if specific is not None:
+            if name == specific: tests.append(case) 
+        
+        else:
+            tests.append(case)
+            
     return tests
 
 class TestAll:
@@ -140,7 +148,7 @@ class TestAll:
     @pytest.mark.skip
     def test_plc(self, test_case: Tuple[str, str]):
         compiler = Compiler(
-            path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ PLC',
+            path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ PLC',
             cmd_prefix=f'java -cp'
         )
         name, _ = test_case
@@ -153,10 +161,9 @@ class TestAll:
                 ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{name}.ctd')
                 assert ctd_output == o_content
 
-    @pytest.mark.parametrize('test_case', get_plx_tests(), ids=lambda t: t.name)
+    @pytest.mark.parametrize('test_case', get_plx_tests('if5'), ids=lambda t: t.name)
     def test_plx(self, test_case: CompilerTestCase):
-        compiler = Compiler(
-            path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ PLXC',
+        compiler = Compiler( path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src PLXC',
             cmd_prefix='java -cp'
         )
         self.plc_to_ctd(compiler=compiler, src_path=test_case.source_path, test_name=test_case.name)

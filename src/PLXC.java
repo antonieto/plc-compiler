@@ -9,7 +9,7 @@ public class PLXC {
 
     private static int varCount = 0;
     public static String newVar() {
-        String var = "$" + varCount;
+        String var = "$t" + varCount;
         PLXC.varCount++;
         return var;
     }
@@ -26,7 +26,10 @@ public class PLXC {
         if (args.length == 2) {
             p = new parser(new Yylex(new FileReader(args[0])));
             PLXC.out = new PrintStream(new FileOutputStream(args[1]));
+        } else {
+            out = System.out;
         }
+
         try {
             if (p != null) {
                 p.parse();

@@ -5,6 +5,4 @@ iy = $1;
 fx = ix;
 fy = iy;
 $2 = iy / ix;
-$3 = fx / fy;
-$4 = $2 + $3;
-print $4;
+$3 = fx /r fy;

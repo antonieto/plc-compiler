@@ -10,3 +10,36 @@ $2 = 1;
 L5:
 if ($2 == 1) goto L1;
 goto L3;
+L2:
+goto L0;
+L1:
+$3 = 2;
+k = $3;
+$4 = 1;
+$5 = i + $4;
+i = $5;
+L6:
+if (j < k) goto L10;
+if (j == k) goto L10;
+$6 = 0;
+goto L11;
+L10:
+$6 = 1;
+L11:
+if ($6 == 1) goto L7;
+goto L9;
+L8:
+goto L6;
+L7:
+$7 = k * i;
+k = $7;
+$8 = x + i;
+x = $8;
+$9 = 1;
+$10 = j + $9;
+j = $10;
+goto L8;
+L9:
+goto L2;
+L3:
+print x;

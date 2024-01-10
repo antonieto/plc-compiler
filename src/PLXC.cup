@@ -1,5 +1,9 @@
 import java_cup.runtime.*;
 import lib.ExpressionSymbol;
+import lib.Type;
+import lib.SymTable;
+import lib.FloatType;
+import java.util.ArrayList;
 
 parser code {:
   public parser (java.io.Reader input) {
@@ -7,37 +11,62 @@ parser code {:
   }
 :};
 
-// Keywords
+action code {:
+    void print(String val) {
+        PLXC.out.println(val);
+    };
+
+    void halt() {
+        PLXC.out.println("error;");
+        PLXC.out.println("halt;");
+    };
+
+    boolean checkExistance(String name) {
+        if (!name.startsWith("$") && !SymTable.has(name)) {
+            halt();
+            return false;
+        }
+        return true;
+    };
+
+:}
+
+
+
+// Keyword values
 terminal IF, ELSE, WHILE, DO, FOR, PRINT;
 
-// Parenthesis
-terminal LPAR, RPAR, LCURL, RCURL, LSQR, RSQR, SEMI;
+// Parenthesis, separators
+terminal LPAR, RPAR, LCURL, RCURL, LSQR, RSQR, SEMI, COMA;
 
 // Operators
 terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR;
 
 // Basic symbols
-terminal IDENT, INT, TYPE;
+terminal IDENT, INT, TYPE, FLOAT;
 
 // ======================================
 // Now, nonterminals
-nonterminal statement_list, statement, elseStatement, declStatement;
+nonterminal statement_list, statement, elseStatement, declStatement, forStatement;
 
 // These production rules return registers
 // condition: returns a register containing 0 or 1 (fale || true)
-nonterminal String expression, condition;
+nonterminal String expression, condition, forStepExpr;
+
+// Declaration
+nonterminal ArrayList<String> declaration;
 // Util nonterminals
 nonterminal String nt_newVar, nt_newLabel;
 
 // Precedences
-precedence left LPAR, RPAR;
-precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE;
-precedence left UMINUS;
 precedence left ELSE;
 precedence left AND;
 precedence left OR;
 precedence left NOT;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence left UMINUS;
+precedence left LPAR, RPAR;
 
 statement_list ::= statement
     | statement_list statement;
@@ -80,21 +109,7 @@ statement ::= expression SEMI
     :} statement WHILE LPAR condition:c {:
         PLXC.out.println("if (" + c + " == 1) goto " + do_label + ";");
     :} RPAR SEMI
-    | FOR LPAR expression:init_ex SEMI
-        nt_newLabel:cond_label nt_newLabel:do_label nt_newLabel:step_label nt_newLabel:end_label {:
-            PLXC.out.println(cond_label + ":");
-        :} condition:c {:
-            PLXC.out.println("if (" + c + " == 1) goto " + do_label + ";");
-            PLXC.out.println("goto " + end_label + ";");
-        :} SEMI {:
-            PLXC.out.println(step_label + ":");
-        :} expression:step_ex RPAR {:
-            PLXC.out.println("goto " + cond_label + ";");
-            PLXC.out.println(do_label + ":");
-        :} statement {:
-            PLXC.out.println("goto " + step_label + ";");
-            PLXC.out.println(end_label + ":");
-        :}
+    | forStatement
     | PRINT LPAR expression:v {:
         PLXC.out.println("print " + v + ";");
     :} RPAR SEMI
@@ -103,45 +118,131 @@ statement ::= expression SEMI
 // Resolve IF ELSE
 elseStatement ::= | ELSE statement;
 
-// Stick to `int`, `char` or `float` single symbol
-declStatement ::= TYPE IDENT SEMI
-    | IDENT IDENT ASIGN expression;
+forStatement ::= FOR LPAR forStepExpr:init_ex SEMI
+    nt_newLabel:cond_label nt_newLabel:do_label nt_newLabel:step_label nt_newLabel:end_label {:
+        PLXC.out.println(cond_label + ":");
+    :} condition:c {:
+        PLXC.out.println("if (" + c + " == 1) goto " + do_label + ";");
+        PLXC.out.println("goto " + end_label + ";");
+    :} SEMI {:
+        PLXC.out.println(step_label + ":");
+    :} forStepExpr:step_ex RPAR {:
+     PLXC.out.println("goto " + cond_label + ";");
+     PLXC.out.println(do_label + ":");
+    :} statement {:
+     PLXC.out.println("goto " + step_label + ";");
+     PLXC.out.println(end_label + ":");
+:};
+
+forStepExpr ::= expression | ;
+
+
+declStatement ::= TYPE:t declaration:ids {:
+    // Insert all ids into sym table
+    for (String id: ids) {
+        Type type = Type.getType(t.toString());
+        SymTable.add(id, new ExpressionSymbol(id, type));
+    }
+:} SEMI;
+declaration ::= IDENT:id {:
+        ArrayList<String> ls = new ArrayList<>();
+        ls.add(id.toString());
+        RESULT = ls;
+
+    :}
+    | IDENT:id COMA declaration:ids {:
+        // Add id to beginning of list
+        ids.add(0, id.toString());
+        RESULT = ids;
+    :}
+    | IDENT:id ASIGN expression:e {:
+        print(id + " = " + e + ";");
+        ArrayList<String> ls = new ArrayList<>();
+        ls.add(id.toString());
+        RESULT = ls;
+    :}
+    | IDENT:id ASIGN expression:e COMA declaration:ids {:
+        print(id + " = " + e + ";");
+        ids.add(0, id.toString());
+        RESULT = ids;
+    :};
 
 // Expression definition
-expression ::= expression:v1 PLUS expression:v2 {:
-        String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + v1 + " + " + v2 + ";");
-        RESULT = var;
+expression ::= expression:e1 PLUS expression:e2 {:
+        checkExistance(e1);
+        checkExistance(e2);
+        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
+        if (!s1.isCompatibleWith(s2)) {
+            halt();
+        }
+        Type t = s1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        String line = t.addOperation(dest, s1, s2);
+        print(line);
+        RESULT = dest.getName();
     :}
     | expression:e1 MINUS expression:e2 {:
-        String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + e1 + " - " + e2 + ";");
-        RESULT = var;
+        checkExistance(e1);
+        checkExistance(e2);
+        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
+        if (!s1.isCompatibleWith(s2)) {
+            halt();
+        }
+        Type t = s1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        String line = t.subsOperation(dest, s1, s2);
+        print(line);
+        RESULT = dest.getName();
     :}
     | expression:e1 TIMES expression:e2 {:
-        String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + e1 + " * " + e2 + ";");
-        RESULT = var;
+        checkExistance(e1);
+        checkExistance(e2);
+        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
+        print("# trying compatibility of " + e1 + " and " + e2);
+        if (!s1.isCompatibleWith(s2)) {
+            halt();
+        }
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
+        String line = s1.getType().multOperation(dest, s1, s2);
+        print(line);
+        RESULT = dest.getName();
     :}
     | expression:e1 DIVIDE expression:e2 {:
-        String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + e1 + " / " + e2 + ";");
-        RESULT = var;
+        checkExistance(e1);
+        checkExistance(e2);
+        ExpressionSymbol s1 = SymTable.get(e1), s2 = SymTable.get(e2);
+        if (!s1.isCompatibleWith(s2)) {
+            halt();
+        }
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
+        String line = s1.getType().divideOperation(dest, s1, s2);
+        print(line);
+        RESULT = dest.getName();
     :}
     | MINUS expression:e1 {:
-        String var = PLXC.newVar();
-        PLXC.out.println(var + " = " + "0 - " + e1 + ";");
-        RESULT = var;
+        checkExistance(e1);
+        ExpressionSymbol s1 = SymTable.get(e1);
+        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), s1.getType());
+        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), s1.getType());
+        print(tmp + " = 0;");
+        Type t = s1.getType();
+        String line = t.subsOperation(dest, tmp, s1);
+        RESULT = dest.getName();
     :} %prec UMINUS// Unary minus (add precedence)
     | LPAR expression:e {: RESULT = e; :} RPAR
     | IDENT:id ASIGN expression:e {:
         PLXC.out.println(id + " = " + e + ";");
-        RESULT = id.toString();
+        RESULT = e;
      :}
     | IDENT:id {: RESULT = id.toString(); :}
     | INT:val {:
         String var = PLXC.newVar();
         PLXC.out.println(var + " = " + val + ";");
+        RESULT = var;
+    :}
+    | FLOAT:val {:
+        String var = PLXC.newVar();
+        print(var + " = " + val + ";");
         RESULT = var;
     :};
 

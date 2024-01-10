@@ -17,9 +17,9 @@ if ($5 == 1) goto L0;
 if ($5 == 0) goto L1;
 L0:
 b = c;
-a = b;
+a = c;
 c = b;
-if (a == c) goto L8;
+if (c == b) goto L8;
 $6 = 0;
 goto L9;
 L8:

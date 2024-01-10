@@ -17,6 +17,7 @@ print                                                 { return new Symbol(sym.PR
 \}                                                    { return new Symbol(sym.RCURL); }
 \(                                                    { return new Symbol(sym.LPAR); }
 \)                                                    { return new Symbol(sym.RPAR); }
+\,                                                    { return new Symbol(sym.COMA); }
 \;                                                    { return new Symbol(sym.SEMI); }
 \=\=                                                  { return new Symbol(sym.EQ);}
 \!\=                                                  { return new Symbol(sym.NOTEQ);}
@@ -34,7 +35,8 @@ print                                                 { return new Symbol(sym.PR
 \*                                                    { return new Symbol(sym.TIMES); }
 \/                                                    { return new Symbol(sym.DIVIDE); }
 print                                                 { return new Symbol(sym.PRINT); }
-[a-zA-Z][a-zA-Z0-9]*                                  { return new Symbol(sym.IDENT, yytext()); }
+[a-zA-Z][a-zA-Z0-9]*                                  { return new Symbol(sym.IDENT, yytext().toString()); }
+[0-9]+\.[0-9]+(E\-?[0-9]+])?                          { System.out.println("found float"); float value = Float.valueOf(yytext()); return new Symbol(sym.FLOAT, value);}
 [0-9]+                                                { int value = Integer.valueOf(yytext()); return new Symbol(sym.INT, value); }
 \/\/.*											      {  }
 \r|\n                                                 {  }
