@@ -1,0 +1,3 @@
+$t0 = 38; # assigning
+a = $t0;
+printc a;

@@ -1,0 +1,10 @@
+$t0 = 65; # assigning
+$t1 = 90; # assigning
+$t2 = 65; # assigning
+null
+$t4 = 2;
+null
+null
+error;
+halt;
+print num;

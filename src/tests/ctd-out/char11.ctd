@@ -1,0 +1,16 @@
+$t0 = 65; # assigning
+$t1 = (int) $t0;
+a = $t1;
+$t2 = 67; # assigning
+$t3 = (int) $t2;
+c = $t3;
+$t4 = (int) a;
+$t5 = (int) c;
+$t6 = $t4 + $t5;
+$t7 = 2;
+$t8 = $t6 / $t7;
+b = $t8;
+print a;
+$t9 = b;
+printc $t9;
+print c;

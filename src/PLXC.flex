@@ -37,6 +37,7 @@ print                                                 { return new Symbol(sym.PR
 print                                                 { return new Symbol(sym.PRINT); }
 
 [a-zA-Z][a-zA-Z0-9]*                                  { return new Symbol(sym.IDENT, yytext().toString()); }
+\'[^'\n]*\'                                              { String charVal = yytext().toString().substring(1, yytext().toString().length() - 1); return new Symbol(sym.CHAR, charVal); }
 [0-9]+                                                { int value = Integer.valueOf(yytext()); return new Symbol(sym.INT, value); }
 \d+(\.\d+)?(E[\+\-]?\d+)?                             { float value = Float.valueOf(yytext()); return new Symbol(sym.FLOAT, value);}
 

@@ -1,0 +1,12 @@
+$t0 = 43; # assigning
+ch1 = $t0;
+$t1 = 42; # assigning
+ch2 = $t1;
+$t2 = 10;
+error;
+halt;
+$t3 = $t2 + ch1;
+error;
+halt;
+$t4 = $t3 - ch2;
+print $t4;

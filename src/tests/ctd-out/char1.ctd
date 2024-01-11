@@ -1,2 +1,4 @@
 $t0 = 65;
 print $t0;
+$t1 = 65; # assigning
+printc $t1;

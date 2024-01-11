@@ -3,6 +3,7 @@ import lib.ExpressionSymbol;
 import lib.Type;
 import lib.SymTable;
 import lib.FloatType;
+import lib.CharType;
 import lib.IntType;
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ terminal LPAR, RPAR, LCURL, RCURL, LSQR, RSQR, SEMI, COMA;
 terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR;
 
 // Basic symbols
-terminal IDENT, INT, TYPE, FLOAT;
+terminal IDENT, INT, TYPE, FLOAT, CHAR;
 
 // ======================================
 // Now, nonterminals
@@ -112,7 +113,9 @@ statement ::= expression SEMI
     :} RPAR SEMI
     | forStatement
     | PRINT LPAR expression:v {:
-        print("print " + v + ";");
+        Type t = v.getType();
+        print(t.printOperation(v));
+        RESULT = v;
     :} RPAR SEMI
     | LCURL statement_list RCURL;
 
@@ -240,7 +243,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
             halt();
             RESULT = e;
         } else {
-            print(t.castOperation(sym, e));
+            print(t.assignOperation(sym, e));
             RESULT = e;
         }
 
@@ -260,8 +263,14 @@ expression ::= expression:e1 PLUS expression:e2 {:
         String var = PLXC.newVar();
         print(var + " = " + val + ";");
         RESULT = new ExpressionSymbol(var, FloatType.getInstance());
-    :};
-
+    :}
+    | CHAR:val {:
+        ExpressionSymbol sym = new ExpressionSymbol(PLXC.newVar(), CharType.getInstance());
+        // TODO: Map to ASCII value
+        print(sym + " = " + CharType.strToASCII(val.toString()) + "; # assigning");
+        RESULT = sym;
+    :}
+    ;
 condition ::= expression:e1 EQ expression:e2 {:
         String var = PLXC.newVar();
         String trueL = PLXC.newLabel();

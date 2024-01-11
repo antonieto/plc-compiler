@@ -1,5 +1,5 @@
 $t0 = 1;
-x = (int) $t0;
+x = $t0;
 if (a != b) goto L3;
 $t1 = 0;
 goto L4;
@@ -20,7 +20,7 @@ if ($t2 == 0) goto L6;
 L5:
 $t3 = 2;
 $t4 = x + $t3;
-x = (int) $t4;
+x = $t4;
 goto L7;
 L6:
 if (a == c) goto L13;
@@ -34,12 +34,12 @@ if ($t5 == 0) goto L11;
 L10:
 $t6 = 3;
 $t7 = x + $t6;
-x = (int) $t7;
+x = $t7;
 goto L12;
 L11:
 $t8 = 4;
 $t9 = x + $t8;
-x = (int) $t9;
+x = $t9;
 goto L12;
 L12:
 goto L7;

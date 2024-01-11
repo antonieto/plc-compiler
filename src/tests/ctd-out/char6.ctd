@@ -1,0 +1,6 @@
+$t0 = 67; # assigning
+printc $t0;
+$t1 = 241; # assigning
+printc $t1;
+$t2 = 9650; # assigning
+printc $t2;

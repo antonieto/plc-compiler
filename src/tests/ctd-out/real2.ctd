@@ -1,6 +1,6 @@
 $t0 = 2.7172;
-e = (float) $t0;
+e = $t0;
 $t1 = 3.1416;
-pi = (float) $t1;
+pi = $t1;
 $t2 = e *r pi;
 print $t2;

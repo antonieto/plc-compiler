@@ -1,7 +1,7 @@
 L0:
 $t0 = 1;
 $t1 = a + $t0;
-a = (int) $t1;
+a = $t1;
 $t2 = 10;
 if (a < $t2) goto L1;
 $t3 = 0;
@@ -12,22 +12,22 @@ L2:
 if ($t3 == 1) goto L0;
 $t4 = 2;
 $t5 = b + $t4;
-b = (int) $t5;
+b = $t5;
 L3:
 $t6 = 1;
 $t7 = b + $t6;
-b = (int) $t7;
+b = $t7;
 L4:
 $t8 = 1;
 $t9 = a + $t8;
-a = (int) $t9;
+a = $t9;
 $t10 = 3;
 $t11 = c + $t10;
-c = (int) $t11;
+c = $t11;
 $t12 = suma + a;
 $t13 = $t12 + b;
 $t14 = $t13 + c;
-suma = (int) $t14;
+suma = $t14;
 $t15 = 10;
 if (c < $t15) goto L5;
 $t16 = 0;

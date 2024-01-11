@@ -1,9 +1,9 @@
 $t0 = 2;
-ix = (int) $t0;
+ix = $t0;
 $t1 = 3;
-iy = (int) $t1;
-fx = (float) ix;
-fy = (float) iy;
+iy = $t1;
+fx = ix;
+fy = iy;
 $t2 = iy / ix;
 $t3 = fx /r fy;
 error;

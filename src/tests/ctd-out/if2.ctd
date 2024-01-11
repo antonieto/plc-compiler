@@ -1,9 +1,9 @@
 $t0 = 1;
-a = (int) $t0;
+a = $t0;
 $t1 = 2;
-b = (int) $t1;
+b = $t1;
 $t2 = 3;
-c = (int) $t2;
+c = $t2;
 $t3 = 0;
 if (a == $t3) goto L3;
 $t4 = 0;
@@ -17,7 +17,7 @@ L0:
 $t5 = 1;
 $t6 = 0;
 $t7 = $t6 - $t5;
-a = (int) $t7;
+a = $t7;
 if (a < b) goto L8;
 if (a == b) goto L8;
 $t8 = 0;
@@ -46,7 +46,7 @@ L12:
 $t11 = 1;
 $t12 = 0;
 $t13 = $t12 - $t11;
-b = (int) $t13;
+b = $t13;
 goto L7;
 L6:
 goto L7;
@@ -54,7 +54,7 @@ L7:
 $t14 = 1;
 $t15 = 0;
 $t16 = $t15 - $t14;
-c = (int) $t16;
+c = $t16;
 goto L2;
 L1:
 goto L2;

@@ -1,0 +1,6 @@
+$t0 = 67;
+x = $t0;
+error;
+halt;
+print x;
+printc a;

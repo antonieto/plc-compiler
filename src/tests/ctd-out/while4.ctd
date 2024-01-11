@@ -26,10 +26,10 @@ $t5 = 1;
 L11:
 if ($t5 == 0) goto L9;
 $t6 = suma + a;
-suma = (int) $t6;
+suma = $t6;
 $t7 = 1;
 $t8 = a + $t7;
-a = (int) $t8;
+a = $t8;
 $t9 = a + b;
 print $t9;
 goto L8;
@@ -38,10 +38,10 @@ goto L4;
 L5:
 $t10 = 2;
 $t11 = b + $t10;
-b = (int) $t11;
+b = $t11;
 $t12 = suma + b;
-suma = (int) $t12;
-c = (int) a;
+suma = $t12;
+c = a;
 goto L0;
 L1:
 print suma;

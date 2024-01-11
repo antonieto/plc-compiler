@@ -1,0 +1,9 @@
+$t0 = 88; # assigning
+$t1 = 89; # assigning
+$t2 = 90; # assigning
+c = $t2;
+b = $t1;
+a = $t0;
+printc a;
+printc b;
+printc c;

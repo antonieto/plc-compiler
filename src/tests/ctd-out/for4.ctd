@@ -11,11 +11,11 @@ goto L3;
 L2:
 $t2 = 1;
 $t3 = i + $t2;
-i = (int) $t3;
+i = $t3;
 goto L0;
 L1:
 $t4 = 2;
-k = (int) $t4;
+k = $t4;
 L6:
 if (j < k) goto L10;
 $t5 = 0;
@@ -27,13 +27,13 @@ if ($t5 == 1) goto L7;
 goto L9;
 L8:
 $t6 = j + i;
-j = (int) $t6;
+j = $t6;
 goto L6;
 L7:
 $t7 = k * i;
-k = (int) $t7;
+k = $t7;
 $t8 = x + i;
-x = (int) $t8;
+x = $t8;
 print x;
 goto L8;
 L9:

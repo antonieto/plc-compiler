@@ -1,0 +1,6 @@
+$t0 = 67;
+x = $t0;
+$t1 = x;
+a = $t1;
+print x;
+printc a;

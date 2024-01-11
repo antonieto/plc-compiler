@@ -1,5 +1,5 @@
 $t0 = 1;
-i = (int) $t0;
+i = $t0;
 L0:
 $t1 = 10;
 if (i < $t1) goto L4;
@@ -14,10 +14,10 @@ L2:
 goto L0;
 L1:
 $t3 = 2;
-k = (int) $t3;
+k = $t3;
 $t4 = 1;
 $t5 = i + $t4;
-i = (int) $t5;
+i = $t5;
 L6:
 if (j < k) goto L10;
 if (j == k) goto L10;
@@ -32,12 +32,12 @@ L8:
 goto L6;
 L7:
 $t7 = k * i;
-k = (int) $t7;
+k = $t7;
 $t8 = x + i;
-x = (int) $t8;
+x = $t8;
 $t9 = 1;
 $t10 = j + $t9;
-j = (int) $t10;
+j = $t10;
 goto L8;
 L9:
 goto L2;

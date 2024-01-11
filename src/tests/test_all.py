@@ -106,6 +106,13 @@ def prepare():
     plx_assembler.assemble()
     yield
 
+@pytest.fixture
+def single_test(request) -> Optional[str]:
+    single = request.config.getoption('--name')
+    if single:
+        return single
+    return None
+
 @functools.cache
 def get_plx_tests(specific: Optional[str]  = None) -> list[CompilerTestCase]:
     tests = []

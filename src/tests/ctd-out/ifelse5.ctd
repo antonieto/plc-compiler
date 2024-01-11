@@ -1,5 +1,5 @@
 $t0 = 1;
-x = (int) $t0;
+x = $t0;
 if (a != b) goto L3;
 $t1 = 0;
 goto L4;
@@ -11,7 +11,7 @@ if ($t1 == 0) goto L1;
 L0:
 $t2 = 2;
 $t3 = x + $t2;
-x = (int) $t3;
+x = $t3;
 if (b == c) goto L8;
 $t4 = 0;
 goto L9;
@@ -23,7 +23,7 @@ if ($t4 == 0) goto L6;
 L5:
 $t5 = 3;
 $t6 = x + $t5;
-x = (int) $t6;
+x = $t6;
 goto L7;
 L6:
 goto L7;
@@ -39,12 +39,12 @@ if ($t7 == 0) goto L11;
 L10:
 $t8 = 3;
 $t9 = x - $t8;
-x = (int) $t9;
+x = $t9;
 goto L12;
 L11:
 $t10 = 8;
 $t11 = x + $t10;
-x = (int) $t11;
+x = $t11;
 goto L12;
 L12:
 goto L2;
@@ -69,12 +69,12 @@ if ($t13 == 0) goto L21;
 L20:
 $t14 = 4;
 $t15 = x + $t14;
-x = (int) $t15;
+x = $t15;
 goto L22;
 L21:
 $t16 = 4;
 $t17 = x + $t16;
-x = (int) $t17;
+x = $t17;
 if (a == c) goto L28;
 $t18 = 0;
 goto L29;
@@ -86,7 +86,7 @@ if ($t18 == 0) goto L26;
 L25:
 $t19 = 5;
 $t20 = x + $t19;
-x = (int) $t20;
+x = $t20;
 goto L27;
 L26:
 if (b == c) goto L33;
@@ -100,12 +100,12 @@ if ($t21 == 0) goto L31;
 L30:
 $t22 = 6;
 $t23 = x + $t22;
-x = (int) $t23;
+x = $t23;
 goto L32;
 L31:
 $t24 = 7;
 $t25 = x + $t24;
-x = (int) $t25;
+x = $t25;
 goto L32;
 L32:
 goto L27;

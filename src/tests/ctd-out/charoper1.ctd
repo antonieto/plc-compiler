@@ -1,0 +1,4 @@
+$t0 = 122; # assigning
+$t1 = 97; # assigning
+null
+printc $t2;
