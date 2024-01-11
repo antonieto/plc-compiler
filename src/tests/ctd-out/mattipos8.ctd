@@ -1,0 +1,74 @@
+$t0 = 3;
+x$SIZE = $t0;
+$t1 = 3;
+y$SIZE = $t1;
+$t2 = 0;
+$t3 = 1.1;
+if ($t2 < 0) goto L0;
+if (x$SIZE < $t2) goto L0;
+if (x$SIZE == $t2) goto L0;
+goto L1;
+L0:
+error;
+halt;
+L1:
+# index is: $t2
+x[$t2] = $t3;
+$t4 = 1;
+$t5 = 2.2;
+if ($t4 < 0) goto L2;
+if (x$SIZE < $t4) goto L2;
+if (x$SIZE == $t4) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+# index is: $t4
+x[$t4] = $t5;
+$t6 = 2;
+$t7 = 3.3;
+if ($t6 < 0) goto L4;
+if (x$SIZE < $t6) goto L4;
+if (x$SIZE == $t6) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+# index is: $t6
+x[$t6] = $t7;
+y = x;
+$t8 = 0;
+if ($t8 < 0) goto L6;
+if (y$SIZE < $t8) goto L6;
+if (y$SIZE == $t8) goto L6;
+goto L7;
+L6:
+error;
+halt;
+L7:
+$t9 = y[$t8];
+$t10 = 1;
+if ($t10 < 0) goto L8;
+if (y$SIZE < $t10) goto L8;
+if (y$SIZE == $t10) goto L8;
+goto L9;
+L8:
+error;
+halt;
+L9:
+$t11 = y[$t10];
+$t12 = $t9 +r $t11;
+$t13 = 2;
+if ($t13 < 0) goto L10;
+if (y$SIZE < $t13) goto L10;
+if (y$SIZE == $t13) goto L10;
+goto L11;
+L10:
+error;
+halt;
+L11:
+$t14 = y[$t13];
+$t15 = $t12 +r $t14;
+print $t15;

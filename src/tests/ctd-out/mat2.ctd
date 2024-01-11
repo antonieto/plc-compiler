@@ -1,0 +1,72 @@
+$t0 = 10;
+x$SIZE = $t0;
+$t1 = 1;
+$t2 = 1;
+if ($t1 < 0) goto L0;
+if (x$SIZE < $t1) goto L0;
+if (x$SIZE == $t1) goto L0;
+goto L1;
+L0:
+error;
+halt;
+L1:
+# index is: $t1
+x[$t1] = $t2;
+$t3 = 2;
+$t4 = 2;
+if ($t3 < 0) goto L2;
+if (x$SIZE < $t3) goto L2;
+if (x$SIZE == $t3) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+# index is: $t3
+x[$t3] = $t4;
+$t5 = 3;
+$t6 = 3;
+if ($t5 < 0) goto L4;
+if (x$SIZE < $t5) goto L4;
+if (x$SIZE == $t5) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+# index is: $t5
+x[$t5] = $t6;
+$t7 = 1;
+if ($t7 < 0) goto L6;
+if (x$SIZE < $t7) goto L6;
+if (x$SIZE == $t7) goto L6;
+goto L7;
+L6:
+error;
+halt;
+L7:
+$t8 = x[$t7];
+$t9 = 2;
+if ($t9 < 0) goto L8;
+if (x$SIZE < $t9) goto L8;
+if (x$SIZE == $t9) goto L8;
+goto L9;
+L8:
+error;
+halt;
+L9:
+$t10 = x[$t9];
+$t11 = 3;
+if ($t11 < 0) goto L10;
+if (x$SIZE < $t11) goto L10;
+if (x$SIZE == $t11) goto L10;
+goto L11;
+L10:
+error;
+halt;
+L11:
+$t12 = x[$t11];
+$t13 = $t10 * $t12;
+$t14 = $t8 + $t13;
+z = $t14;
+print z;

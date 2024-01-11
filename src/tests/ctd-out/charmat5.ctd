@@ -1,0 +1,41 @@
+$t0 = 3;
+a$SIZE = $t0;
+$t1 = 0;
+$t2 = 65; # assigning
+if ($t1 < 0) goto L0;
+if (a$SIZE < $t1) goto L0;
+if (a$SIZE == $t1) goto L0;
+goto L1;
+L0:
+error;
+halt;
+L1:
+# index is: $t1
+a[$t1] = $t2;
+$t3 = 1;
+$t4 = 66; # assigning
+if ($t3 < 0) goto L2;
+if (a$SIZE < $t3) goto L2;
+if (a$SIZE == $t3) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+# index is: $t3
+a[$t3] = $t4;
+$t5 = 2;
+$t6 = 67; # assigning
+if ($t5 < 0) goto L4;
+if (a$SIZE < $t5) goto L4;
+if (a$SIZE == $t5) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+# index is: $t5
+a[$t5] = $t6;
+$t7 = 0;
+i = $t7;
+L6:

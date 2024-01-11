@@ -5,6 +5,7 @@ import lib.SymTable;
 import lib.FloatType;
 import lib.CharType;
 import lib.IntType;
+import lib.ArrayType;
 import java.util.ArrayList;
 
 parser code {:
@@ -83,7 +84,7 @@ nt_newLabel ::= {:
 
 statement ::= expression SEMI
     // Declaration statement
-    | declStatement
+    | declStatement SEMI
     | IF
         nt_newLabel:ifLabel nt_newLabel:elseLabel nt_newLabel:endLabel
         LPAR  condition:cond {:
@@ -146,7 +147,21 @@ declStatement ::= TYPE:t declaration:ids {:
         Type type = Type.getType(t.toString());
         SymTable.add(id, new ExpressionSymbol(id, type));
     }
-:} SEMI;
+:}
+    // Simple array declaration first -> TYPE IDENT[expression] SEMI;
+    | TYPE:t IDENT:id LSQR expression:len RSQR {:
+        if (!len.isRegister()) {
+            halt();
+        }
+        Type contentType = Type.getType(t.toString());
+        Type arrayType = new ArrayType(contentType, 0);
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), arrayType);
+        // Store size
+        print(sym + "$SIZE = " + len + ";");
+        SymTable.add(id.toString(), sym);
+        RESULT = sym;
+    :}
+    ;
 declaration ::= IDENT:id {:
         ArrayList<String> ls = new ArrayList<>();
         ls.add(id.toString());
@@ -168,7 +183,8 @@ declaration ::= IDENT:id {:
         print(id + " = " + e + ";");
         ids.add(0, id.toString());
         RESULT = ids;
-    :};
+    :}
+    ;
 
 // Expression definition
 expression ::= expression:e1 PLUS expression:e2 {:
@@ -248,6 +264,38 @@ expression ::= expression:e1 PLUS expression:e2 {:
         }
 
      :}
+    // Indexed assignment
+    | IDENT:id LSQR expression:index RSQR ASIGN expression:e {:
+         if (!SymTable.has(id.toString())) {
+             halt();
+             RESULT = e;
+         }
+         ExpressionSymbol sym = SymTable.get(id.toString());
+         if (!(sym.getType() instanceof ArrayType)) {
+            halt();
+         }
+         ArrayType arrayType = (ArrayType) sym.getType();
+         boolean exprMatchesArrayType = arrayType.getContentType().isCompatibleWith(e.getType());
+         boolean isIndexInt = index.getType() == IntType.getInstance();
+         // If operand doesn't match array type
+         if (!exprMatchesArrayType || !isIndexInt) {
+            halt();
+         }
+
+         String haltLabel = PLXC.newLabel();
+         String continueLabel = PLXC.newLabel();
+         print("if (" + index + " < 0) goto " + haltLabel + ";");
+         print("if (" + sym + "$SIZE < " + index + ") goto " + haltLabel + ";");
+         print("if (" + sym + "$SIZE == " + index + ") goto " + haltLabel + ";");
+         print("goto " + continueLabel + ";");
+         print(haltLabel + ":");
+         halt();
+         print(continueLabel + ":");
+         // Assignment
+         print("# index is: " + index);
+         print(id + "[" + index + "] = " + e + ";");
+         RESULT = e;
+    :}
     | IDENT:id {:
         if(!SymTable.has(id.toString())) {
             halt();
@@ -266,9 +314,36 @@ expression ::= expression:e1 PLUS expression:e2 {:
     :}
     | CHAR:val {:
         ExpressionSymbol sym = new ExpressionSymbol(PLXC.newVar(), CharType.getInstance());
-        // TODO: Map to ASCII value
         print(sym + " = " + CharType.strToASCII(val.toString()) + "; # assigning");
         RESULT = sym;
+    :}
+    // Array indexing
+    | IDENT:id LSQR expression:e RSQR {:
+        // Index array at id
+        if (!SymTable.has(id.toString())) {
+            halt();
+        }
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        Type t = sym.getType();
+        if (!(t instanceof ArrayType) || e.getType() != IntType.getInstance()) {
+            halt();
+        }
+
+        // Range check
+        String haltLabel = PLXC.newLabel();
+        String continueLabel = PLXC.newLabel();
+        print("if (" + e + " < 0) goto " + haltLabel + ";");
+        print("if (" + sym + "$SIZE < " + e + ") goto " + haltLabel + ";");
+        print("if (" + sym + "$SIZE == " + e + ") goto " + haltLabel + ";");
+        print("goto " + continueLabel + ";");
+        print(haltLabel + ":");
+        halt();
+        print(continueLabel + ":");
+
+        Type contentType = ((ArrayType) t).getContentType();
+        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), contentType);
+        print(tmp + " = " + id.toString() + "[" + e + "];");
+        RESULT = tmp;
     :}
     ;
 condition ::= expression:e1 EQ expression:e2 {:

@@ -1,2 +1,28 @@
 $t0 = 10;
 p = $t0;
+error;
+halt;
+x$SIZE = p;
+$t1 = 1;
+$t2 = 3;
+if ($t1 < 0) goto L0;
+if (x$SIZE < $t1) goto L0;
+if (x$SIZE == $t1) goto L0;
+goto L1;
+L0:
+error;
+halt;
+L1:
+# index is: $t1
+x[$t1] = $t2;
+$t3 = 1;
+if ($t3 < 0) goto L2;
+if (x$SIZE < $t3) goto L2;
+if (x$SIZE == $t3) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+$t4 = x[$t3];
+print $t4;
