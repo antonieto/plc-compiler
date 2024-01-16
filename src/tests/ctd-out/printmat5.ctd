@@ -1,2 +1,15 @@
 $t0 = 3;
 st$SIZE = $t0;
+$t1 = 65; # assigning
+$t2 = 66; # assigning
+$t3 = 67; # assigning
+if (st$SIZE != 3) goto L0; # Here
+goto L1;
+L0:
+error;
+halt;
+L1:
+st[0] = $t1;
+st[1] = $t2;
+st[2] = $t3;
+null

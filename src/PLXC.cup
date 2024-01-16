@@ -1,11 +1,14 @@
 import java_cup.runtime.*;
 import lib.ExpressionSymbol;
+import lib.ExpressionList;
 import lib.Type;
 import lib.SymTable;
 import lib.FloatType;
 import lib.CharType;
 import lib.IntType;
 import lib.ArrayType;
+import lib.IncompatibleException;
+import lib.UndefinedSymbolException;
 import java.util.ArrayList;
 
 parser code {:
@@ -58,8 +61,10 @@ nonterminal ExpressionSymbol expression, forStepExpr;
 
 // Declaration
 nonterminal ArrayList<String> declaration;
+nonterminal ArrayList<ExpressionSymbol> listExpression;
 // Util nonterminals
 nonterminal String nt_newVar, nt_newLabel;
+
 
 // Precedences
 precedence left ELSE;
@@ -71,7 +76,7 @@ precedence left TIMES, DIVIDE;
 precedence left UMINUS;
 precedence left LPAR, RPAR;
 
-statement_list ::= statement
+statement_list ::= statement {: SymTable.print(); :}
     | statement_list statement;
 
 // utils
@@ -154,11 +159,12 @@ declStatement ::= TYPE:t declaration:ids {:
             halt();
         }
         Type contentType = Type.getType(t.toString());
-        Type arrayType = new ArrayType(contentType, 0);
+        ArrayType arrayType = new ArrayType(contentType, 0);
         ExpressionSymbol sym = new ExpressionSymbol(id.toString(), arrayType);
         // Store size
         print(sym + "$SIZE = " + len + ";");
         SymTable.add(id.toString(), sym);
+        SymTable.print();
         RESULT = sym;
     :}
     ;
@@ -345,7 +351,55 @@ expression ::= expression:e1 PLUS expression:e2 {:
         print(tmp + " = " + id.toString() + "[" + e + "];");
         RESULT = tmp;
     :}
+    // List assigment
+    | IDENT:id ASIGN LCURL listExpression:ls {:
+        if (!SymTable.has(id.toString())) {
+            halt();
+        }
+
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        // Type check
+        if (!(sym.getType() instanceof ArrayType)) {
+            halt();
+        }
+        ArrayType type = (ArrayType) sym.getType();
+        // Size check
+        String haltLabel = PLXC.newLabel();
+        String continueLabel = PLXC.newLabel();
+        print("if (" + sym + "$SIZE != " + ls.size() + ") goto " + haltLabel + "; # Here");
+        print("goto " + continueLabel + ";");
+        print(haltLabel + ":");
+        halt();
+        print(continueLabel + ":");
+
+        for (int i = 0; i < ls.size(); i++) {
+            ExpressionSymbol s = ls.get(i);
+            // Type check
+            if (s.getType() != type.getContentType()) {
+                System.out.println(s.getType() + " is not compatible with " + type.getContentType());
+                halt();
+            }
+            // Assignment
+            print(sym + "[" + i + "] = " + s + ";");
+        }
+        // Indexed assignment
+        RESULT = sym;
+    :} RCURL
     ;
+// END EXPRESSIONS
+
+listExpression ::= expression:e {:
+        Type t = e.getType();
+        ArrayList<ExpressionSymbol> ls = new ArrayList<>();
+        ls.add(e);
+        RESULT = ls;
+    :}
+    | expression:e COMA listExpression:ls {:
+        ls.add(0, e);
+        RESULT = ls;
+    :}
+    ;
+
 condition ::= expression:e1 EQ expression:e2 {:
         String var = PLXC.newVar();
         String trueL = PLXC.newLabel();
@@ -488,5 +542,6 @@ condition ::= expression:e1 EQ expression:e2 {:
 
         print(endLabel + ":");
         RESULT = var;
+
     :}
     | LPAR condition:c1 {: RESULT = c1; :} RPAR;

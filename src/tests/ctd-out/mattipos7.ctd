@@ -2,3 +2,51 @@ $t0 = 3;
 x$SIZE = $t0;
 $t1 = 3.1416;
 pi = $t1;
+$t2 = 1.0;
+$t3 = 1.1;
+$t4 = 2.2;
+$t5 = $t3 +r $t4;
+$t6 = 2.0;
+$t7 = $t6 *r pi;
+if (x$SIZE != 3) goto L0; # Here
+goto L1;
+L0:
+error;
+halt;
+L1:
+x[0] = $t2;
+x[1] = $t5;
+x[2] = $t7;
+$t8 = 0;
+if ($t8 < 0) goto L2;
+if (x$SIZE < $t8) goto L2;
+if (x$SIZE == $t8) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+$t9 = x[$t8];
+$t10 = 1;
+if ($t10 < 0) goto L4;
+if (x$SIZE < $t10) goto L4;
+if (x$SIZE == $t10) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+$t11 = x[$t10];
+$t12 = $t9 +r $t11;
+$t13 = 2;
+if ($t13 < 0) goto L6;
+if (x$SIZE < $t13) goto L6;
+if (x$SIZE == $t13) goto L6;
+goto L7;
+L6:
+error;
+halt;
+L7:
+$t14 = x[$t13];
+$t15 = $t12 +r $t14;
+print $t15;

@@ -1,2 +1,25 @@
 $t0 = 2;
 st$SIZE = $t0;
+$t1 = 65; # assigning
+$t2 = 66; # assigning
+$t3 = 67; # assigning
+if (st$SIZE != 3) goto L0; # Here
+goto L1;
+L0:
+error;
+halt;
+L1:
+st[0] = $t1;
+st[1] = $t2;
+st[2] = $t3;
+$t4 = 0;
+if ($t4 < 0) goto L2;
+if (st$SIZE < $t4) goto L2;
+if (st$SIZE == $t4) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+$t5 = st[$t4];
+printc $t5;

@@ -2,3 +2,27 @@ $t0 = 3;
 a$SIZE = $t0;
 $t1 = 2;
 b$SIZE = $t1;
+$t2 = 65; # assigning
+$t3 = 66; # assigning
+$t4 = 67; # assigning
+if (a$SIZE != 3) goto L0; # Here
+goto L1;
+L0:
+error;
+halt;
+L1:
+a[0] = $t2;
+a[1] = $t3;
+a[2] = $t4;
+b = a;
+$t5 = 1;
+if ($t5 < 0) goto L2;
+if (b$SIZE < $t5) goto L2;
+if (b$SIZE == $t5) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+$t6 = b[$t5];
+printc $t6;
