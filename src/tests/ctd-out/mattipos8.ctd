@@ -12,7 +12,6 @@ L0:
 error;
 halt;
 L1:
-# index is: $t2
 x[$t2] = $t3;
 $t4 = 1;
 $t5 = 2.2;
@@ -24,7 +23,6 @@ L2:
 error;
 halt;
 L3:
-# index is: $t4
 x[$t4] = $t5;
 $t6 = 2;
 $t7 = 3.3;
@@ -36,7 +34,6 @@ L4:
 error;
 halt;
 L5:
-# index is: $t6
 x[$t6] = $t7;
 if (x$SIZE == y$SIZE) goto L7;
 if (x$SIZE < y$SIZE) goto L7;

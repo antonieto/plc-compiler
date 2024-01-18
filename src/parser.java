@@ -1099,7 +1099,7 @@ class CUP$parser$actions {
 		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ExpressionSymbol e2 = (ExpressionSymbol)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t1 = e1.getType();
@@ -1127,7 +1127,7 @@ class CUP$parser$actions {
 		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ExpressionSymbol e2 = (ExpressionSymbol)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -1151,7 +1151,7 @@ class CUP$parser$actions {
 		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ExpressionSymbol e2 = (ExpressionSymbol)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -1175,7 +1175,7 @@ class CUP$parser$actions {
 		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ExpressionSymbol e2 = (ExpressionSymbol)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -1281,7 +1281,6 @@ class CUP$parser$actions {
         }
         print(t.assignOperation(sym, e));
         RESULT = e;
-
      
               CUP$parser$result = parser.getSymbolFactory().newSymbol("expression",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1327,7 +1326,6 @@ class CUP$parser$actions {
          halt();
          print(continueLabel + ":");
          // Assignment
-         print("# index is: " + index);
          print(id + "[" + index + "] = " + e + ";");
          RESULT = e;
     
@@ -1554,6 +1552,10 @@ class CUP$parser$actions {
 		int lsright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ArrayList<ExpressionSymbol> ls = (ArrayList<ExpressionSymbol>)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+        // Exact type match
+        if (e.getType() != ls.get(0).getType()) {
+            halt();
+        }
         ls.add(0, e);
         RESULT = ls;
     

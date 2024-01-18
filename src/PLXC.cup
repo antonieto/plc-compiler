@@ -201,7 +201,7 @@ declaration ::= IDENT:id {:
 
 // Expression definition
 expression ::= expression:e1 PLUS expression:e2 {:
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t1 = e1.getType();
@@ -215,7 +215,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
         RESULT = dest;
     :}
     | expression:e1 MINUS expression:e2 {:
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -225,7 +225,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
         RESULT = dest;
     :}
     | expression:e1 TIMES expression:e2 {:
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -235,7 +235,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
         RESULT = dest;
     :}
     | expression:e1 DIVIDE expression:e2 {:
-        if (!e1.isCompatibleWith(e2)) {
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
             halt();
         }
         Type t = e1.getType();
@@ -277,7 +277,6 @@ expression ::= expression:e1 PLUS expression:e2 {:
         }
         print(t.assignOperation(sym, e));
         RESULT = e;
-
      :}
     // Indexed assignment
     | IDENT:id LSQR expression:index RSQR ASIGN expression:e {:
@@ -307,7 +306,6 @@ expression ::= expression:e1 PLUS expression:e2 {:
          halt();
          print(continueLabel + ":");
          // Assignment
-         print("# index is: " + index);
          print(id + "[" + index + "] = " + e + ";");
          RESULT = e;
     :}
@@ -398,7 +396,6 @@ expression ::= expression:e1 PLUS expression:e2 {:
     :}
     ;
 // END EXPRESSIONS
-
 listExpression ::= expression:e {:
         Type t = e.getType();
         ArrayList<ExpressionSymbol> ls = new ArrayList<>();
@@ -406,6 +403,10 @@ listExpression ::= expression:e {:
         RESULT = ls;
     :}
     | expression:e COMA listExpression:ls {:
+        // Exact type match
+        if (e.getType() != ls.get(0).getType()) {
+            halt();
+        }
         ls.add(0, e);
         RESULT = ls;
     :}

@@ -10,7 +10,6 @@ L0:
 error;
 halt;
 L1:
-# index is: $t1
 x[$t1] = $t2;
 $t3 = 1;
 if ($t3 < 0) goto L2;

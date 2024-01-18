@@ -10,7 +10,6 @@ L0:
 error;
 halt;
 L1:
-# index is: $t1
 a[$t1] = $t2;
 $t3 = 1;
 $t4 = 66;
@@ -22,7 +21,6 @@ L2:
 error;
 halt;
 L3:
-# index is: $t3
 a[$t3] = $t4;
 $t5 = 2;
 $t6 = 67;
@@ -34,7 +32,6 @@ L4:
 error;
 halt;
 L5:
-# index is: $t5
 a[$t5] = $t6;
 $t7 = 0;
 i = $t7;

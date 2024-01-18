@@ -30,7 +30,6 @@ L6:
 error;
 halt;
 L7:
-# index is: $t8
 a[$t8] = $t9;
 if (i < 0) goto L8;
 if (a$SIZE < i) goto L8;

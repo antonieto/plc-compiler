@@ -10,7 +10,6 @@ L0:
 error;
 halt;
 L1:
-# index is: $t1
 a[$t1] = $t2;
 $t3 = 4;
 $t4 = 69;
@@ -22,7 +21,6 @@ L2:
 error;
 halt;
 L3:
-# index is: $t3
 a[$t3] = $t4;
 $t5 = 88;
 $t6 = 66;
@@ -47,7 +45,6 @@ L6:
 error;
 halt;
 L7:
-# index is: $t9
 a[$t9] = $t10;
 $t11 = 3;
 $t12 = 68;
@@ -59,7 +56,6 @@ L8:
 error;
 halt;
 L9:
-# index is: $t11
 a[$t11] = $t12;
 $t13 = 0;
 if ($t13 < 0) goto L10;

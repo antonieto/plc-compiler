@@ -28,7 +28,6 @@ L6:
 error;
 halt;
 L7:
-# index is: i
 a[i] = i;
 if (i < 0) goto L8;
 if (a$SIZE < i) goto L8;
