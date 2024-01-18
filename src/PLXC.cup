@@ -1,8 +1,10 @@
 import java_cup.runtime.*;
 import lib.ExpressionSymbol;
+import lib.GlobalRepository;
 import lib.ExpressionList;
 import lib.Type;
 import lib.SymTable;
+import lib.StringType;
 import lib.FloatType;
 import lib.CharType;
 import lib.IntType;
@@ -45,10 +47,10 @@ terminal IF, ELSE, WHILE, DO, FOR, PRINT;
 terminal LPAR, RPAR, LCURL, RCURL, LSQR, RSQR, SEMI, COMA;
 
 // Operators
-terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR;
+terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR, DOT;
 
 // Basic symbols
-terminal IDENT, INT, TYPE, FLOAT, CHAR;
+terminal IDENT, INT, TYPE, FLOAT, CHAR, STRING;
 
 // ======================================
 // Now, nonterminals
@@ -61,7 +63,7 @@ nonterminal ExpressionSymbol expression, forStepExpr;
 
 // Declaration
 nonterminal ArrayList<String> declaration;
-nonterminal ArrayList<ExpressionSymbol> listExpression;
+nonterminal ArrayList<ExpressionSymbol> listExpression, declarationList;
 // Util nonterminals
 nonterminal String nt_newVar, nt_newLabel;
 
@@ -81,10 +83,10 @@ statement_list ::= statement {: SymTable.print(); :}
 
 // utils
 nt_newVar ::= {:
-    RESULT = PLXC.newVar();
+    RESULT = GlobalRepository.newVar();
 :};
 nt_newLabel ::= {:
-    RESULT = PLXC.newLabel();
+    RESULT = GlobalRepository.newLabel();
 :};
 
 statement ::= expression SEMI
@@ -146,49 +148,54 @@ forStatement ::= FOR LPAR forStepExpr SEMI
 
 forStepExpr ::= expression | ;
 
+declStatement ::= TYPE:t {: PLXC.typeBuffer = Type.getType(t.toString()); :} declarationList {: PLXC.typeBuffer = null; :};
 
-declStatement ::= TYPE:t declaration:ids {:
-    for (String id: ids) {
-        Type type = Type.getType(t.toString());
-        SymTable.add(id, new ExpressionSymbol(id, type));
-    }
-:}
-    // Simple array declaration first -> TYPE IDENT[expression] SEMI;
-    | TYPE:t IDENT:id LSQR expression:len RSQR {:
-        if (!len.isRegister()) {
+declarationList ::= declaration | declaration COMA declarationList;
+
+declaration ::= IDENT:id {:
+        Type t = PLXC.typeBuffer;
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        SymTable.add(id.toString(), sym);
+    :}
+    | IDENT:id LSQR expression:sizeExpr RSQR {:
+        if (sizeExpr.getType() != IntType.getInstance() || !sizeExpr.isRegister()) {
+            print("# Indexes must be integers");
             halt();
         }
-        Type contentType = Type.getType(t.toString());
-        ArrayType arrayType = new ArrayType(contentType, 0);
-        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), arrayType);
         // Store size
-        print(sym + "$SIZE = " + len + ";");
+        print(id.toString() + "$SIZE = " + sizeExpr + ";");
+        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
         SymTable.add(id.toString(), sym);
-        SymTable.print();
-        RESULT = sym;
     :}
-    ;
-declaration ::= IDENT:id {:
-        ArrayList<String> ls = new ArrayList<>();
-        ls.add(id.toString());
-        RESULT = ls;
-
-    :}
-    | IDENT:id COMA declaration:ids {:
-        // Add id to beginning of list
-        ids.add(0, id.toString());
-        RESULT = ids;
-    :}
+    // Perform assignment, type check
     | IDENT:id ASIGN expression:e {:
-        print(id + " = " + e + ";");
-        ArrayList<String> ls = new ArrayList<>();
-        ls.add(id.toString());
-        RESULT = ls;
+        Type t = PLXC.typeBuffer;
+        Type expressionType = e.getType();
+        if (!t.isCompatibleWith(expressionType)) {
+            halt();
+        }
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        print(id.toString() + " = " + e + ";");
+        SymTable.add(id.toString(), sym);
     :}
-    | IDENT:id ASIGN expression:e COMA declaration:ids {:
-        print(id + " = " + e + ";");
-        ids.add(0, id.toString());
-        RESULT = ids;
+    // Perform assignment, type check
+    | IDENT:id LSQR expression:sizeExpr RSQR ASIGN expression:arrExpr {:
+        if (sizeExpr.getType() != IntType.getInstance() || !sizeExpr.isRegister()) {
+            print("# Indexes must be integers");
+            halt();
+        }
+        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        Type exprType = arrExpr.getType();
+        if (!t.isCompatibleWith(exprType)) {
+            print("# Incompatible types");
+            halt();
+        }
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        print(id.toString() + " = " + arrExpr + ";");
+        // Store size (again smh)
+        print(id.toString() + "$SIZE = " + sizeExpr + ";");
+        SymTable.add(id.toString(), sym);
     :}
     ;
 
@@ -202,7 +209,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
         Type floatType = FloatType.getInstance();
         // Prioritize float
         Type t = t1 == floatType || t2 == floatType ? floatType : e1.getType();
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
         String line = t.addOperation(dest, e1, e2);
         print(line);
         RESULT = dest;
@@ -212,7 +219,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
             halt();
         }
         Type t = e1.getType();
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
         String line = t.subsOperation(dest, e1, e2);
         print(line);
         RESULT = dest;
@@ -222,7 +229,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
             halt();
         }
         Type t = e1.getType();
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
         String line = t.multOperation(dest, e1, e2);
         print(line);
         RESULT = dest;
@@ -232,14 +239,14 @@ expression ::= expression:e1 PLUS expression:e2 {:
             halt();
         }
         Type t = e1.getType();
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), t);
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
         String line = e1.getType().divideOperation(dest, e1, e2);
         print(line);
         RESULT = dest;
     :}
     | MINUS expression:e1 {:
-        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), e1.getType());
-        ExpressionSymbol dest = new ExpressionSymbol(PLXC.newVar(), e1.getType());
+        ExpressionSymbol tmp = new ExpressionSymbol(GlobalRepository.newVar(), e1.getType());
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), e1.getType());
         print(tmp + " = 0;");
         Type t = e1.getType();
         String line = t.subsOperation(dest, tmp, e1);
@@ -248,7 +255,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
     :} %prec UMINUS// Unary minus (add precedence)
     | LPAR TYPE:t RPAR expression:e1 {:
         Type type = Type.getType(t.toString());
-        ExpressionSymbol temp = new ExpressionSymbol(PLXC.newVar(), type);
+        ExpressionSymbol temp = new ExpressionSymbol(GlobalRepository.newVar(), type);
         String line = type.castOperation(temp, e1);
         print(line);
         RESULT = temp;
@@ -264,10 +271,12 @@ expression ::= expression:e1 PLUS expression:e2 {:
         if (!sym.isCompatibleWith(e)) {
             halt();
             RESULT = e;
-        } else {
-            print(t.assignOperation(sym, e));
-            RESULT = e;
         }
+        if (t instanceof ArrayType) {
+            String haltLabel = GlobalRepository.newLabel();
+        }
+        print(t.assignOperation(sym, e));
+        RESULT = e;
 
      :}
     // Indexed assignment
@@ -288,8 +297,8 @@ expression ::= expression:e1 PLUS expression:e2 {:
             halt();
          }
 
-         String haltLabel = PLXC.newLabel();
-         String continueLabel = PLXC.newLabel();
+         String haltLabel = GlobalRepository.newLabel();
+         String continueLabel = GlobalRepository.newLabel();
          print("if (" + index + " < 0) goto " + haltLabel + ";");
          print("if (" + sym + "$SIZE < " + index + ") goto " + haltLabel + ";");
          print("if (" + sym + "$SIZE == " + index + ") goto " + haltLabel + ";");
@@ -309,19 +318,31 @@ expression ::= expression:e1 PLUS expression:e2 {:
         RESULT = SymTable.get(id.toString());
     :}
     | INT:val {:
-        String var = PLXC.newVar();
+        String var = GlobalRepository.newVar();
         print(var + " = " + val + ";");
         RESULT = new ExpressionSymbol(var, IntType.getInstance());
     :}
     | FLOAT:val {:
-        String var = PLXC.newVar();
+        String var = GlobalRepository.newVar();
         print(var + " = " + val + ";");
         RESULT = new ExpressionSymbol(var, FloatType.getInstance());
     :}
     | CHAR:val {:
-        ExpressionSymbol sym = new ExpressionSymbol(PLXC.newVar(), CharType.getInstance());
-        print(sym + " = " + CharType.strToASCII(val.toString()) + "; # assigning");
+        ExpressionSymbol sym = new ExpressionSymbol(GlobalRepository.newVar(), CharType.getInstance());
+        print(sym + " = " + CharType.strToASCII(val.toString()) + ";");
         RESULT = sym;
+    :}
+    | STRING:val {:
+        // Store all characters in temp arr of chars
+        String var = GlobalRepository.newVar();
+        System.out.println("The length of string: " + val + " is " + val.toString().length());
+        for (int i = 0; i < val.toString().length(); i++) {
+            char c = val.toString().charAt(i);
+            print(var + "[" + i + "] = " + (int) c + ";");
+        }
+        // Null-terminated string
+        print(var + "[" + val.toString().length() + "] = " + 0 + ";");
+        RESULT = new ExpressionSymbol(var, StringType.getInstance());
     :}
     // Array indexing
     | IDENT:id LSQR expression:e RSQR {:
@@ -336,8 +357,8 @@ expression ::= expression:e1 PLUS expression:e2 {:
         }
 
         // Range check
-        String haltLabel = PLXC.newLabel();
-        String continueLabel = PLXC.newLabel();
+        String haltLabel = GlobalRepository.newLabel();
+        String continueLabel = GlobalRepository.newLabel();
         print("if (" + e + " < 0) goto " + haltLabel + ";");
         print("if (" + sym + "$SIZE < " + e + ") goto " + haltLabel + ";");
         print("if (" + sym + "$SIZE == " + e + ") goto " + haltLabel + ";");
@@ -347,44 +368,34 @@ expression ::= expression:e1 PLUS expression:e2 {:
         print(continueLabel + ":");
 
         Type contentType = ((ArrayType) t).getContentType();
-        ExpressionSymbol tmp = new ExpressionSymbol(PLXC.newVar(), contentType);
+        ExpressionSymbol tmp = new ExpressionSymbol(GlobalRepository.newVar(), contentType);
         print(tmp + " = " + id.toString() + "[" + e + "];");
         RESULT = tmp;
     :}
-    // List assigment
-    | IDENT:id ASIGN LCURL listExpression:ls {:
-        if (!SymTable.has(id.toString())) {
-            halt();
+    // listExpressions
+    | LCURL listExpression:ls {:
+        Type contentType = null;
+        if (ls.size() > 0) {
+            contentType = ls.get(0).getType();
         }
-
-        ExpressionSymbol sym = SymTable.get(id.toString());
-        // Type check
-        if (!(sym.getType() instanceof ArrayType)) {
-            halt();
+        ArrayType type = new ArrayType(contentType, ls.size());
+        ExpressionSymbol resultSym = new ExpressionSymbol(GlobalRepository.newVar(), type);
+        // Write all symbols to temporary array
+        for (int i = 0; i < ls.size() ; i++) {
+            print(resultSym + "[" + i + "] = " + ls.get(i) + ";");
         }
-        ArrayType type = (ArrayType) sym.getType();
-        // Size check
-        String haltLabel = PLXC.newLabel();
-        String continueLabel = PLXC.newLabel();
-        print("if (" + sym + "$SIZE != " + ls.size() + ") goto " + haltLabel + "; # Here");
-        print("goto " + continueLabel + ";");
-        print(haltLabel + ":");
-        halt();
-        print(continueLabel + ":");
-
-        for (int i = 0; i < ls.size(); i++) {
-            ExpressionSymbol s = ls.get(i);
-            // Type check
-            if (s.getType() != type.getContentType()) {
-                System.out.println(s.getType() + " is not compatible with " + type.getContentType());
-                halt();
-            }
-            // Assignment
-            print(sym + "[" + i + "] = " + s + ";");
-        }
-        // Indexed assignment
-        RESULT = sym;
+        // Store size too!
+        print(resultSym + "$SIZE = " + ls.size() + ";");
+        RESULT = resultSym;
     :} RCURL
+    | IDENT:id DOT IDENT:attribute {:
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        if (sym == null) {
+            halt();
+        }
+        Type t = sym.getType();
+        RESULT = t.attributeAccess(sym, attribute.toString());
+    :}
     ;
 // END EXPRESSIONS
 
@@ -401,9 +412,9 @@ listExpression ::= expression:e {:
     ;
 
 condition ::= expression:e1 EQ expression:e2 {:
-        String var = PLXC.newVar();
-        String trueL = PLXC.newLabel();
-        String endL = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
         print("if (" + e1 + " == " + e2 + ") goto " + trueL + ";");
         // False block first
         print(var + " = 0;");
@@ -414,9 +425,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 NOTEQ expression:e2 {:
-        String var = PLXC.newVar();
-        String trueL = PLXC.newLabel();
-        String endL = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
         print("if (" + e1 + " != " + e2 + ") goto " + trueL + ";");
         // False block first
         print(var + " = 0;");
@@ -427,9 +438,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 LT expression:e2 {:
-        String var = PLXC.newVar();
-        String trueL = PLXC.newLabel();
-        String endL = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
         print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
         // False block first
         print(var + " = 0;");
@@ -440,9 +451,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 LTEQ expression:e2 {:
-        String var = PLXC.newVar();
-        String tl = PLXC.newLabel();
-        String el = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String tl = GlobalRepository.newLabel();
+        String el = GlobalRepository.newLabel();
 
         print("if (" + e1 + " < " + e2 + ") goto " + tl + ";");
         print("if (" + e1 + " == " + e2 + ") goto " + tl + ";");
@@ -457,9 +468,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 GT expression:e2 {:
-        String var = PLXC.newVar();
-        String fl = PLXC.newLabel();
-        String el = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String fl = GlobalRepository.newLabel();
+        String el = GlobalRepository.newLabel();
 
         print("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
         print("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
@@ -474,9 +485,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         RESULT = var;
     :}
     | expression:e1 GTEQ expression:e2 {:
-         String var = PLXC.newVar();
-         String trueL = PLXC.newLabel();
-         String endL = PLXC.newLabel();
+         String var = GlobalRepository.newVar();
+         String trueL = GlobalRepository.newLabel();
+         String endL = GlobalRepository.newLabel();
          print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
          // False block
          print(var + " = 1;");
@@ -489,8 +500,8 @@ condition ::= expression:e1 EQ expression:e2 {:
          RESULT = var;
     :}
     | NOT condition:c {:
-        String trueL = PLXC.newLabel();
-        String endL = PLXC.newLabel();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
         print("if (" + c + " == 1) goto " + trueL + ";");
         print(c + " = 1;");
         print("goto " + endL + ";");
@@ -503,9 +514,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         // Short circuit
         print("if (" + c1 + " == 0) goto " + fl + ";");
     :} condition:c2 {:
-        String var = PLXC.newVar();
-        String trueLabel = PLXC.newLabel();
-        String endLabel = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String trueLabel = GlobalRepository.newLabel();
+        String endLabel = GlobalRepository.newLabel();
 
         print("if (" + c2 + " == 0) goto " + fl + ";");
         print("goto " + trueLabel + ";");
@@ -525,9 +536,9 @@ condition ::= expression:e1 EQ expression:e2 {:
         // Short circuit
         print("if (" + c1 + " == 1) goto " + tl + ";");
     :} condition:c2 {:
-        String var = PLXC.newVar();
-        String falseLabel = PLXC.newLabel();
-        String endLabel = PLXC.newLabel();
+        String var = GlobalRepository.newVar();
+        String falseLabel = GlobalRepository.newLabel();
+        String endLabel = GlobalRepository.newLabel();
 
         print("if (" + c2 + " == 1) goto " + tl + ";");
         print("goto " + falseLabel + ";");

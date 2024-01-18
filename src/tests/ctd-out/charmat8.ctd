@@ -21,7 +21,7 @@ L1:
 $t6 = i + i;
 $t7 = 2;
 $t8 = $t6 / $t7;
-$t9 = 88; # assigning
+$t9 = 88;
 if ($t8 < 0) goto L6;
 if (a$SIZE < $t8) goto L6;
 if (a$SIZE == $t8) goto L6;

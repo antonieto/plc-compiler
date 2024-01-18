@@ -1,5 +1,6 @@
 $t0 = 10;
 p = $t0;
+# Indexes must be integers
 error;
 halt;
 x$SIZE = p;

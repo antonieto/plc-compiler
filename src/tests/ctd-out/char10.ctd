@@ -1,6 +1,6 @@
-$t0 = 49; # assigning
+$t0 = 49;
 a1 = $t0;
-$t1 = 53; # assigning
+$t1 = 53;
 a5 = $t1;
 $t2 = (int) a1;
 $t3 = (int) a2;

@@ -1,9 +1,9 @@
-$t0 = 88; # assigning
-$t1 = 89; # assigning
-$t2 = 90; # assigning
-c = $t2;
-b = $t1;
+$t0 = 88;
 a = $t0;
+$t1 = 89;
+b = $t1;
+$t2 = 90;
+c = $t2;
 printc a;
 printc b;
 printc c;

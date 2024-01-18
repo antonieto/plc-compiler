@@ -1,10 +1,9 @@
-$t0 = 65; # assigning
-$t1 = 90; # assigning
-$t2 = 65; # assigning
-null
+$t0 = 65;
+$t1 = 90;
+$t2 = 65;
+$t3 = $t1 - $t2;
 $t4 = 2;
-null
-null
-error;
-halt;
+$t5 = $t3 / $t4;
+$t6 = $t0 + $t5;
+num = $t6;
 print num;

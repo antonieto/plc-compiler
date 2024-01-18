@@ -1,4 +1,4 @@
-$t0 = 122; # assigning
-$t1 = 97; # assigning
-null
-printc $t2;
+$t0 = 122;
+$t1 = 97;
+$t2 = $t0 - $t1;
+print $t2;

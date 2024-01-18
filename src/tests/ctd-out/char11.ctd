@@ -1,7 +1,7 @@
-$t0 = 65; # assigning
+$t0 = 65;
 $t1 = (int) $t0;
 a = $t1;
-$t2 = 67; # assigning
+$t2 = 67;
 $t3 = (int) $t2;
 c = $t3;
 $t4 = (int) a;

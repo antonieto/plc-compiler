@@ -36,4 +36,10 @@ halt;
 L5:
 # index is: $t5
 n[$t5] = $t6;
-null
+$t7 = 0;
+L6:
+if (n$SIZE == $t7) goto L7;
+if (n$SIZE< $t7) goto L7;
+$t8 = n[$t7];
+print $t8;$t7 = $t7 + 1;
+goto L6;L7:

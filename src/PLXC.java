@@ -2,24 +2,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-
+import lib.Type;
 public class PLXC {
 
     public static PrintStream out;
 
-    private static int varCount = 0;
-    public static String newVar() {
-        String var = "$t" + varCount;
-        PLXC.varCount++;
-        return var;
-    }
-
-    private static int labelCount = 0;
-    public static String newLabel() {
-        String label = "L" + labelCount;
-        PLXC.labelCount++;
-        return label;
-    }
+    // Just a hack to access type throughout declaration statement
+    public static Type typeBuffer;
 
     public static void main(String[] args) throws IOException {
         parser p = null;

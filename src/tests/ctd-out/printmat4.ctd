@@ -1,7 +1,7 @@
 $t0 = 3;
 n$SIZE = $t0;
 $t1 = 0;
-$t2 = 65; # assigning
+$t2 = 65;
 if ($t1 < 0) goto L0;
 if (n$SIZE < $t1) goto L0;
 if (n$SIZE == $t1) goto L0;
@@ -13,7 +13,7 @@ L1:
 # index is: $t1
 n[$t1] = $t2;
 $t3 = 1;
-$t4 = 66; # assigning
+$t4 = 66;
 if ($t3 < 0) goto L2;
 if (n$SIZE < $t3) goto L2;
 if (n$SIZE == $t3) goto L2;
@@ -25,7 +25,7 @@ L3:
 # index is: $t3
 n[$t3] = $t4;
 $t5 = 2;
-$t6 = 67; # assigning
+$t6 = 67;
 if ($t5 < 0) goto L4;
 if (n$SIZE < $t5) goto L4;
 if (n$SIZE == $t5) goto L4;
@@ -36,4 +36,10 @@ halt;
 L5:
 # index is: $t5
 n[$t5] = $t6;
-null
+$t7 = 0;
+L6:
+if (n$SIZE == $t7) goto L7;
+if (n$SIZE< $t7) goto L7;
+$t8 = n[$t7];
+printc $t8;$t7 = $t7 + 1;
+goto L6;L7:

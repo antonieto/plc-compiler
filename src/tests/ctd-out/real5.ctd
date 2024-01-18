@@ -1,4 +1,5 @@
 $t0 = 3.1416;
 error;
 halt;
+x = $t0;
 print x;

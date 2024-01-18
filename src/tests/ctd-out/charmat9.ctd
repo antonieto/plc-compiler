@@ -1,7 +1,7 @@
 $t0 = 5;
 a$SIZE = $t0;
 $t1 = 0;
-$t2 = 65; # assigning
+$t2 = 65;
 if ($t1 < 0) goto L0;
 if (a$SIZE < $t1) goto L0;
 if (a$SIZE == $t1) goto L0;
@@ -13,7 +13,7 @@ L1:
 # index is: $t1
 a[$t1] = $t2;
 $t3 = 4;
-$t4 = 69; # assigning
+$t4 = 69;
 if ($t3 < 0) goto L2;
 if (a$SIZE < $t3) goto L2;
 if (a$SIZE == $t3) goto L2;
@@ -24,83 +24,84 @@ halt;
 L3:
 # index is: $t3
 a[$t3] = $t4;
-$t5 = 88; # assigning
-$t6 = 66; # assigning
-$t7 = 90; # assigning
-if (a$SIZE != 3) goto L4; # Here
-goto L5;
-L4:
+$t5 = 88;
+$t6 = 66;
+$t7 = 90;
+$t8[0] = $t5;
+$t8[1] = $t6;
+$t8[2] = $t7;
+$t8$SIZE = 3;
+if ($t8$SIZE == a$SIZE) goto L5;
+if ($t8$SIZE < a$SIZE) goto L5;
 error;
 halt;
 L5:
-a[0] = $t5;
-a[1] = $t6;
-a[2] = $t7;
-$t8 = 2;
-$t9 = 67; # assigning
-if ($t8 < 0) goto L6;
-if (a$SIZE < $t8) goto L6;
-if (a$SIZE == $t8) goto L6;
+a = $t8;
+$t9 = 2;
+$t10 = 67;
+if ($t9 < 0) goto L6;
+if (a$SIZE < $t9) goto L6;
+if (a$SIZE == $t9) goto L6;
 goto L7;
 L6:
 error;
 halt;
 L7:
-# index is: $t8
-a[$t8] = $t9;
-$t10 = 3;
-$t11 = 68; # assigning
-if ($t10 < 0) goto L8;
-if (a$SIZE < $t10) goto L8;
-if (a$SIZE == $t10) goto L8;
+# index is: $t9
+a[$t9] = $t10;
+$t11 = 3;
+$t12 = 68;
+if ($t11 < 0) goto L8;
+if (a$SIZE < $t11) goto L8;
+if (a$SIZE == $t11) goto L8;
 goto L9;
 L8:
 error;
 halt;
 L9:
-# index is: $t10
-a[$t10] = $t11;
-$t12 = 0;
-if ($t12 < 0) goto L10;
-if (a$SIZE < $t12) goto L10;
-if (a$SIZE == $t12) goto L10;
+# index is: $t11
+a[$t11] = $t12;
+$t13 = 0;
+if ($t13 < 0) goto L10;
+if (a$SIZE < $t13) goto L10;
+if (a$SIZE == $t13) goto L10;
 goto L11;
 L10:
 error;
 halt;
 L11:
-$t13 = a[$t12];
-printc $t13;
-$t14 = 2;
-if ($t14 < 0) goto L12;
-if (a$SIZE < $t14) goto L12;
-if (a$SIZE == $t14) goto L12;
+$t14 = a[$t13];
+printc $t14;
+$t15 = 2;
+if ($t15 < 0) goto L12;
+if (a$SIZE < $t15) goto L12;
+if (a$SIZE == $t15) goto L12;
 goto L13;
 L12:
 error;
 halt;
 L13:
-$t15 = a[$t14];
-printc $t15;
-$t16 = 3;
-if ($t16 < 0) goto L14;
-if (a$SIZE < $t16) goto L14;
-if (a$SIZE == $t16) goto L14;
+$t16 = a[$t15];
+printc $t16;
+$t17 = 3;
+if ($t17 < 0) goto L14;
+if (a$SIZE < $t17) goto L14;
+if (a$SIZE == $t17) goto L14;
 goto L15;
 L14:
 error;
 halt;
 L15:
-$t17 = a[$t16];
-printc $t17;
-$t18 = 4;
-if ($t18 < 0) goto L16;
-if (a$SIZE < $t18) goto L16;
-if (a$SIZE == $t18) goto L16;
+$t18 = a[$t17];
+printc $t18;
+$t19 = 4;
+if ($t19 < 0) goto L16;
+if (a$SIZE < $t19) goto L16;
+if (a$SIZE == $t19) goto L16;
 goto L17;
 L16:
 error;
 halt;
 L17:
-$t19 = a[$t18];
-printc $t19;
+$t20 = a[$t19];
+printc $t20;

@@ -4,7 +4,7 @@ import java_cup.runtime.*;
 %cup
 
 %%
-int|char|float                                        { return new Symbol(sym.TYPE, yytext()); }
+int|char|float|string                                 { return new Symbol(sym.TYPE, yytext()); }
 if                                                    { return new Symbol(sym.IF); }
 else                                                  { return new Symbol(sym.ELSE); }
 while                                                 { return new Symbol(sym.WHILE); }
@@ -35,12 +35,12 @@ print                                                 { return new Symbol(sym.PR
 \*                                                    { return new Symbol(sym.TIMES); }
 \/                                                    { return new Symbol(sym.DIVIDE); }
 print                                                 { return new Symbol(sym.PRINT); }
-
 [a-zA-Z][a-zA-Z0-9]*                                  { return new Symbol(sym.IDENT, yytext().toString()); }
-\'[^'\n]*\'                                              { String charVal = yytext().toString().substring(1, yytext().toString().length() - 1); return new Symbol(sym.CHAR, charVal); }
+\'[^'\n]*\'                                           { String charVal = yytext().toString().substring(1, yytext().toString().length() - 1); return new Symbol(sym.CHAR, charVal); }
+\"([^\"\\]|\\.)*\"                                    { String strVal = yytext().toString().substring(1, yytext().toString().length() - 1); return new Symbol(sym.STRING, strVal); }
 [0-9]+                                                { int value = Integer.valueOf(yytext()); return new Symbol(sym.INT, value); }
 \d+(\.\d+)?(E[\+\-]?\d+)?                             { float value = Float.valueOf(yytext()); return new Symbol(sym.FLOAT, value);}
-
+\.                                                    { return new Symbol(sym.DOT); }
 \/\/.*											      {  }
 \r|\n                                                 {  }
 \ |\t|\f                                              {  }

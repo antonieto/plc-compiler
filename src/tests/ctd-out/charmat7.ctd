@@ -2,27 +2,33 @@ $t0 = 3;
 a$SIZE = $t0;
 $t1 = 2;
 b$SIZE = $t1;
-$t2 = 65; # assigning
-$t3 = 66; # assigning
-$t4 = 67; # assigning
-if (a$SIZE != 3) goto L0; # Here
-goto L1;
-L0:
+$t2 = 65;
+$t3 = 66;
+$t4 = 67;
+$t5[0] = $t2;
+$t5[1] = $t3;
+$t5[2] = $t4;
+$t5$SIZE = 3;
+if ($t5$SIZE == a$SIZE) goto L1;
+if ($t5$SIZE < a$SIZE) goto L1;
 error;
 halt;
 L1:
-a[0] = $t2;
-a[1] = $t3;
-a[2] = $t4;
-b = a;
-$t5 = 1;
-if ($t5 < 0) goto L2;
-if (b$SIZE < $t5) goto L2;
-if (b$SIZE == $t5) goto L2;
-goto L3;
-L2:
+a = $t5;
+if (a$SIZE == b$SIZE) goto L3;
+if (a$SIZE < b$SIZE) goto L3;
 error;
 halt;
 L3:
-$t6 = b[$t5];
-printc $t6;
+b = a;
+$t6 = 1;
+if ($t6 < 0) goto L4;
+if (b$SIZE < $t6) goto L4;
+if (b$SIZE == $t6) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+$t7 = b[$t6];
+printc $t7;

@@ -1,0 +1,30 @@
+$t0[0] = 97;
+$t0[1] = 98;
+$t0[2] = 99;
+$t0[3] = 0;
+a = $t0;
+$t1[0] = 120;
+$t1[1] = 121;
+$t1[2] = 122;
+$t1[3] = 0;
+b = $t1;
+La$prloop:
+a$reg = a[a$cnt];
+if (a$reg == 0) goto La$pend;
+writec a$reg;
+a$cnt = a$cnt + 1;
+goto La$prloop;
+La$pend:
+writec 10;
+a$cnt = 0;
+
+Lb$prloop:
+b$reg = b[b$cnt];
+if (b$reg == 0) goto Lb$pend;
+writec b$reg;
+b$cnt = b$cnt + 1;
+goto Lb$prloop;
+Lb$pend:
+writec 10;
+b$cnt = 0;
+

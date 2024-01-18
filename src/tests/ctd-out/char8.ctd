@@ -1,6 +1,6 @@
-$t0 = 48; # assigning
+$t0 = 48;
 a = $t0;
-$t1 = 49; # assigning
+$t1 = 49;
 b = $t1;
 printc a;
 printc b;
