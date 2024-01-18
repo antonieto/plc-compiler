@@ -1,0 +1,22 @@
+$t0 = 3;
+n$SIZE = $t0;
+$t1 = 65;
+$t2 = 66;
+$t3 = 67;
+$t4[0] = $t1;
+$t4[1] = $t2;
+$t4[2] = $t3;
+$t4$SIZE = 3;
+if ($t4$SIZE == n$SIZE) goto L1;
+if ($t4$SIZE < n$SIZE) goto L1;
+error;
+halt;
+L1:
+n = $t4;
+$t5 = 0;
+L2:
+if (n$SIZE == $t5) goto L3;
+if (n$SIZE< $t5) goto L3;
+$t6 = n[$t5];
+print $t6;$t5 = $t5 + 1;
+goto L2;L3:

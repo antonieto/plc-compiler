@@ -1,0 +1,6 @@
+$t0 = 67;
+printc $t0;
+$t1 = 241;
+printc $t1;
+$t2 = 9650;
+printc $t2;

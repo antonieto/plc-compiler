@@ -1,0 +1,14 @@
+$t0 = 3;
+$t1 = 1;
+$t2 = alfa + $t1;
+$t3 = 2;
+$t4 = beta + $t3;
+$t5 = $t2 * $t4;
+$t6 = $t0 + $t5;
+beta = $t6;
+alfa = $t6;
+$t7 = 2;
+$t8 = $t7 * alfa;
+$t9 = $t8 - beta;
+delta = $t9;
+print delta;

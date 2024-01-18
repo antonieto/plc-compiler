@@ -1,41 +1,29 @@
 L0:
 L1:
 L2:
-$0 = suma + a;
-$1 = $0 + b;
-$2 = $1 + c;
-suma = $2;
-$3 = 1;
-$4 = c + $3;
-c = $4;
-$5 = 10;
-if (c < $5) goto L3;
-$6 = 0;
-goto L4;
+   $t0 = suma + a;
+   $t1 = $t0 + b;
+   $t2 = $t1 + c;
+   suma = $t2;
+   $t3 = c + 1;
+   c = $t3;
+   if (c < 10) goto L3;
+   goto L4;
 L3:
-$6 = 1;
+   goto L2;
 L4:
-if ($6 == 1) goto L2;
-$7 = 1;
-$8 = b + $7;
-b = $8;
-$9 = 10;
-if (b < $9) goto L5;
-$10 = 0;
-goto L6;
+   $t4 = b + 1;
+   b = $t4;
+   if (b < 10) goto L5;
+   goto L6;
 L5:
-$10 = 1;
+   goto L1;
 L6:
-if ($10 == 1) goto L1;
-$11 = 1;
-$12 = a + $11;
-a = $12;
-$13 = 10;
-if (a < $13) goto L7;
-$14 = 0;
-goto L8;
+   $t5 = a + 1;
+   a = $t5;
+   if (a < 10) goto L7;
+   goto L8;
 L7:
-$14 = 1;
+   goto L0;
 L8:
-if ($14 == 1) goto L0;
-print suma;
+   print suma;

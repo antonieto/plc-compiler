@@ -1,0 +1,48 @@
+$t0 = 3;
+st$SIZE = $t0;
+$t1 = 65;
+$t2 = 66;
+$t3 = 67;
+$t4[0] = $t1;
+$t4[1] = $t2;
+$t4[2] = $t3;
+$t4$SIZE = 3;
+if ($t4$SIZE == st$SIZE) goto L1;
+if ($t4$SIZE < st$SIZE) goto L1;
+error;
+halt;
+L1:
+st = $t4;
+$t5 = 2;
+if ($t5 < 0) goto L2;
+if (st$SIZE < $t5) goto L2;
+if (st$SIZE == $t5) goto L2;
+goto L3;
+L2:
+error;
+halt;
+L3:
+$t6 = st[$t5];
+printc $t6;
+$t7 = 1;
+if ($t7 < 0) goto L4;
+if (st$SIZE < $t7) goto L4;
+if (st$SIZE == $t7) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+$t8 = st[$t7];
+printc $t8;
+$t9 = 0;
+if ($t9 < 0) goto L6;
+if (st$SIZE < $t9) goto L6;
+if (st$SIZE == $t9) goto L6;
+goto L7;
+L6:
+error;
+halt;
+L7:
+$t10 = st[$t9];
+printc $t10;

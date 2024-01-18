@@ -1,0 +1,10 @@
+$t0 = 2;
+ix = $t0;
+$t1 = 3;
+iy = $t1;
+fx = ix;
+fy = iy;
+$t2 = iy / ix;
+$t3 = fx /r fy;
+$t4 = $t2 +r $t3;
+print $t4;

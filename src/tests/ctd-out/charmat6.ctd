@@ -1,0 +1,34 @@
+$t0 = 3;
+a$SIZE = $t0;
+$t1 = 5;
+b$SIZE = $t1;
+$t2 = 65;
+$t3 = 66;
+$t4 = 67;
+$t5[0] = $t2;
+$t5[1] = $t3;
+$t5[2] = $t4;
+$t5$SIZE = 3;
+if ($t5$SIZE == a$SIZE) goto L1;
+if ($t5$SIZE < a$SIZE) goto L1;
+error;
+halt;
+L1:
+a = $t5;
+if (a$SIZE == b$SIZE) goto L3;
+if (a$SIZE < b$SIZE) goto L3;
+error;
+halt;
+L3:
+b = a;
+$t6 = 1;
+if ($t6 < 0) goto L4;
+if (b$SIZE < $t6) goto L4;
+if (b$SIZE == $t6) goto L4;
+goto L5;
+L4:
+error;
+halt;
+L5:
+$t7 = b[$t6];
+printc $t7;

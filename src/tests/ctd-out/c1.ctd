@@ -1,17 +1,7 @@
-$0 = 1;
-$1 = 1;
-if ($0 == $1) goto L3;
-$2 = 0;
-goto L4;
-L3:
-$2 = 1;
-L4:
-if ($2 == 1) goto L0;
-if ($2 == 0) goto L1;
+   if (1 == 1) goto L0;
+   goto L1;
 L0:
-$3 = 2;
-print $3;
-goto L2;
+   print 2;
+   goto L2;
 L1:
-goto L2;
 L2:

@@ -1,0 +1,14 @@
+$t0 = 65;
+$t1 = 66;
+$t2 = 67;
+$t3[0] = $t0;
+$t3[1] = $t1;
+$t3[2] = $t2;
+$t3$SIZE = 3;
+$t4 = 0;
+L0:
+if ($t3$SIZE == $t4) goto L1;
+if ($t3$SIZE< $t4) goto L1;
+$t5 = $t3[$t4];
+print $t5;$t4 = $t4 + 1;
+goto L0;L1:

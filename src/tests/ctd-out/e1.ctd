@@ -1,20 +1,9 @@
-$0 = 1;
-$1 = 2;
-if ($0 < $1) goto L3;
-$2 = 0;
-goto L4;
-L3:
-$2 = 1;
-L4:
-if ($2 == 1) goto L0;
-if ($2 == 0) goto L1;
+   if (1 < 2) goto L0;
+   goto L1;
 L0:
-$3 = 1;
-a = $3;
-goto L2;
+   a = 1;
+   goto L2;
 L1:
-$4 = 2;
-a = $4;
-goto L2;
+   a = 2;
 L2:
-print a;
+   print a;

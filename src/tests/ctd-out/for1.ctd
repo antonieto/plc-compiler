@@ -1,0 +1,21 @@
+$t0 = 0;
+i = $t0;
+L0:
+$t1 = 5;
+if (i < $t1) goto L4;
+$t2 = 0;
+goto L5;
+L4:
+$t2 = 1;
+L5:
+if ($t2 == 1) goto L1;
+goto L3;
+L2:
+$t3 = 1;
+$t4 = i + $t3;
+i = $t4;
+goto L0;
+L1:
+print i;
+goto L2;
+L3:

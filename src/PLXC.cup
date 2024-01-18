@@ -1,0 +1,559 @@
+import java_cup.runtime.*;
+import lib.ExpressionSymbol;
+import lib.GlobalRepository;
+import lib.ExpressionList;
+import lib.Type;
+import lib.SymTable;
+import lib.StringType;
+import lib.FloatType;
+import lib.CharType;
+import lib.IntType;
+import lib.ArrayType;
+import lib.IncompatibleException;
+import lib.UndefinedSymbolException;
+import java.util.ArrayList;
+
+parser code {:
+  public parser (java.io.Reader input) {
+    super(new Yylex(input));
+  }
+:};
+
+action code {:
+    void print(String val) {
+        PLXC.out.println(val);
+    };
+
+    void halt() {
+        print("error;");
+        print("halt;");
+    };
+
+    boolean checkExistance(String name) {
+        if (!name.startsWith("$") && !SymTable.has(name)) {
+            halt();
+            return false;
+        }
+        return true;
+    };
+:}
+
+
+
+// Keyword values
+terminal IF, ELSE, WHILE, DO, FOR, PRINT;
+
+// Parenthesis, separators
+terminal LPAR, RPAR, LCURL, RCURL, LSQR, RSQR, SEMI, COMA;
+
+// Operators
+terminal ASIGN, PLUS, MINUS, UMINUS, TIMES, DIVIDE, EQ, NOTEQ, LT, LTEQ, GT, GTEQ, NOT, AND, OR, DOT;
+
+// Basic symbols
+terminal IDENT, INT, TYPE, FLOAT, CHAR, STRING;
+
+// ======================================
+// Now, nonterminals
+nonterminal statement_list, statement, elseStatement, declStatement, forStatement;
+
+// These production rules return registers
+// condition: returns a register containing 0 or 1 (fale || true)
+nonterminal String condition;
+nonterminal ExpressionSymbol expression, forStepExpr;
+
+// Declaration
+nonterminal ArrayList<String> declaration;
+nonterminal ArrayList<ExpressionSymbol> listExpression, declarationList;
+// Util nonterminals
+nonterminal String nt_newVar, nt_newLabel;
+
+
+// Precedences
+precedence left ELSE;
+precedence left AND;
+precedence left OR;
+precedence left NOT;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence left UMINUS;
+precedence left LPAR, RPAR;
+
+statement_list ::= statement {: SymTable.print(); :}
+    | statement_list statement;
+
+// utils
+nt_newVar ::= {:
+    RESULT = GlobalRepository.newVar();
+:};
+nt_newLabel ::= {:
+    RESULT = GlobalRepository.newLabel();
+:};
+
+statement ::= expression SEMI
+    // Declaration statement
+    | declStatement SEMI
+    | IF
+        nt_newLabel:ifLabel nt_newLabel:elseLabel nt_newLabel:endLabel
+        LPAR  condition:cond {:
+            print("if (" + cond + " == 1" + ") goto " + ifLabel + ";");
+            print("if (" + cond + " == 0" + ") goto " + elseLabel + ";");
+            print(ifLabel + ":");
+        :} RPAR statement {:
+            print("goto " + endLabel + ";");
+            print(elseLabel + ":");
+        :} elseStatement {:
+            print("goto " + endLabel + ";");
+            print(endLabel + ":");
+        :}
+    | WHILE nt_newLabel:cond_label nt_newLabel:end_label LPAR {:
+        print(cond_label + ":");
+    :} condition:c RPAR {:
+        print("if (" + c + " == 0) goto " + end_label + ";");
+        // Same as do-while, switch execution
+    :} statement {:
+        print("goto " + cond_label + ";");
+        print(end_label + ":");
+    :}
+    | DO nt_newLabel:do_label {:
+        print(do_label + ":");
+    :} statement WHILE LPAR condition:c {:
+        print("if (" + c + " == 1) goto " + do_label + ";");
+    :} RPAR SEMI
+    | forStatement
+    | PRINT LPAR expression:v {:
+        Type t = v.getType();
+        print(t.printOperation(v));
+        RESULT = v;
+    :} RPAR SEMI
+    | LCURL statement_list RCURL;
+
+// Resolve IF ELSE
+elseStatement ::= | ELSE statement;
+
+forStatement ::= FOR LPAR forStepExpr SEMI
+    nt_newLabel:cond_label nt_newLabel:do_label nt_newLabel:step_label nt_newLabel:end_label {:
+        print(cond_label + ":");
+    :} condition:c {:
+        print("if (" + c + " == 1) goto " + do_label + ";");
+        print("goto " + end_label + ";");
+    :} SEMI {:
+        print(step_label + ":");
+    :} forStepExpr RPAR {:
+        print("goto " + cond_label + ";");
+        print(do_label + ":");
+    :} statement {:
+        print("goto " + step_label + ";");
+        print(end_label + ":");
+:};
+
+forStepExpr ::= expression | ;
+
+declStatement ::= TYPE:t {: PLXC.typeBuffer = Type.getType(t.toString()); :} declarationList {: PLXC.typeBuffer = null; :};
+
+declarationList ::= declaration | declaration COMA declarationList;
+
+declaration ::= IDENT:id {:
+        Type t = PLXC.typeBuffer;
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        SymTable.add(id.toString(), sym);
+    :}
+    | IDENT:id LSQR expression:sizeExpr RSQR {:
+        if (sizeExpr.getType() != IntType.getInstance() || !sizeExpr.isRegister()) {
+            print("# Indexes must be integers");
+            halt();
+        }
+        // Store size
+        print(id.toString() + "$SIZE = " + sizeExpr + ";");
+        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        SymTable.add(id.toString(), sym);
+    :}
+    // Perform assignment, type check
+    | IDENT:id ASIGN expression:e {:
+        Type t = PLXC.typeBuffer;
+        Type expressionType = e.getType();
+        if (!t.isCompatibleWith(expressionType)) {
+            halt();
+        }
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        print(id.toString() + " = " + e + ";");
+        SymTable.add(id.toString(), sym);
+    :}
+    // Perform assignment, type check
+    | IDENT:id LSQR expression:sizeExpr RSQR ASIGN expression:arrExpr {:
+        if (sizeExpr.getType() != IntType.getInstance() || !sizeExpr.isRegister()) {
+            print("# Indexes must be integers");
+            halt();
+        }
+        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        Type exprType = arrExpr.getType();
+        if (!t.isCompatibleWith(exprType)) {
+            print("# Incompatible types");
+            halt();
+        }
+        ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
+        print(id.toString() + " = " + arrExpr + ";");
+        // Store size (again smh)
+        print(id.toString() + "$SIZE = " + sizeExpr + ";");
+        SymTable.add(id.toString(), sym);
+    :}
+    ;
+
+// Expression definition
+expression ::= expression:e1 PLUS expression:e2 {:
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
+            halt();
+        }
+        Type t1 = e1.getType();
+        Type t2 = e2.getType();
+        Type floatType = FloatType.getInstance();
+        // Prioritize float
+        Type t = t1 == floatType || t2 == floatType ? floatType : e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
+        String line = t.addOperation(dest, e1, e2);
+        print(line);
+        RESULT = dest;
+    :}
+    | expression:e1 MINUS expression:e2 {:
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
+            halt();
+        }
+        Type t = e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
+        String line = t.subsOperation(dest, e1, e2);
+        print(line);
+        RESULT = dest;
+    :}
+    | expression:e1 TIMES expression:e2 {:
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
+            halt();
+        }
+        Type t = e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
+        String line = t.multOperation(dest, e1, e2);
+        print(line);
+        RESULT = dest;
+    :}
+    | expression:e1 DIVIDE expression:e2 {:
+        if (!(e1.isCompatibleWith(e2) || e2.isCompatibleWith(e1))) {
+            halt();
+        }
+        Type t = e1.getType();
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), t);
+        String line = e1.getType().divideOperation(dest, e1, e2);
+        print(line);
+        RESULT = dest;
+    :}
+    | MINUS expression:e1 {:
+        ExpressionSymbol tmp = new ExpressionSymbol(GlobalRepository.newVar(), e1.getType());
+        ExpressionSymbol dest = new ExpressionSymbol(GlobalRepository.newVar(), e1.getType());
+        print(tmp + " = 0;");
+        Type t = e1.getType();
+        String line = t.subsOperation(dest, tmp, e1);
+        print(line);
+        RESULT = dest;
+    :} %prec UMINUS// Unary minus (add precedence)
+    | LPAR TYPE:t RPAR expression:e1 {:
+        Type type = Type.getType(t.toString());
+        ExpressionSymbol temp = new ExpressionSymbol(GlobalRepository.newVar(), type);
+        String line = type.castOperation(temp, e1);
+        print(line);
+        RESULT = temp;
+    :}
+    | LPAR expression:e {: RESULT = e; :} RPAR
+    | IDENT:id ASIGN expression:e {:
+        if (!SymTable.has(id.toString())) {
+            halt();
+            RESULT = e;
+        }
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        Type t = sym.getType();
+        if (!sym.isCompatibleWith(e)) {
+            halt();
+            RESULT = e;
+        }
+        if (t instanceof ArrayType) {
+            String haltLabel = GlobalRepository.newLabel();
+        }
+        print(t.assignOperation(sym, e));
+        RESULT = e;
+     :}
+    // Indexed assignment
+    | IDENT:id LSQR expression:index RSQR ASIGN expression:e {:
+         if (!SymTable.has(id.toString())) {
+             halt();
+             RESULT = e;
+         }
+         ExpressionSymbol sym = SymTable.get(id.toString());
+         if (!(sym.getType() instanceof ArrayType)) {
+            halt();
+         }
+         ArrayType arrayType = (ArrayType) sym.getType();
+         boolean exprMatchesArrayType = arrayType.getContentType().isCompatibleWith(e.getType());
+         boolean isIndexInt = index.getType() == IntType.getInstance();
+         // If operand doesn't match array type
+         if (!exprMatchesArrayType || !isIndexInt) {
+            halt();
+         }
+
+         String haltLabel = GlobalRepository.newLabel();
+         String continueLabel = GlobalRepository.newLabel();
+         print("if (" + index + " < 0) goto " + haltLabel + ";");
+         print("if (" + sym + "$SIZE < " + index + ") goto " + haltLabel + ";");
+         print("if (" + sym + "$SIZE == " + index + ") goto " + haltLabel + ";");
+         print("goto " + continueLabel + ";");
+         print(haltLabel + ":");
+         halt();
+         print(continueLabel + ":");
+         // Assignment
+         print(id + "[" + index + "] = " + e + ";");
+         RESULT = e;
+    :}
+    | IDENT:id {:
+        if(!SymTable.has(id.toString())) {
+            halt();
+        }
+        RESULT = SymTable.get(id.toString());
+    :}
+    | INT:val {:
+        String var = GlobalRepository.newVar();
+        print(var + " = " + val + ";");
+        RESULT = new ExpressionSymbol(var, IntType.getInstance());
+    :}
+    | FLOAT:val {:
+        String var = GlobalRepository.newVar();
+        print(var + " = " + val + ";");
+        RESULT = new ExpressionSymbol(var, FloatType.getInstance());
+    :}
+    | CHAR:val {:
+        ExpressionSymbol sym = new ExpressionSymbol(GlobalRepository.newVar(), CharType.getInstance());
+        print(sym + " = " + CharType.strToASCII(val.toString()) + ";");
+        RESULT = sym;
+    :}
+    | STRING:val {:
+        // Store all characters in temp arr of chars
+        String var = GlobalRepository.newVar();
+        System.out.println("The length of string: " + val + " is " + val.toString().length());
+        for (int i = 0; i < val.toString().length(); i++) {
+            char c = val.toString().charAt(i);
+            print(var + "[" + i + "] = " + (int) c + ";");
+        }
+        // Null-terminated string
+        print(var + "[" + val.toString().length() + "] = " + 0 + ";");
+        RESULT = new ExpressionSymbol(var, StringType.getInstance());
+    :}
+    // Array indexing
+    | IDENT:id LSQR expression:e RSQR {:
+        // Index array at id
+        if (!SymTable.has(id.toString())) {
+            halt();
+        }
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        Type t = sym.getType();
+        if (!(t instanceof ArrayType) || e.getType() != IntType.getInstance()) {
+            halt();
+        }
+
+        // Range check
+        String haltLabel = GlobalRepository.newLabel();
+        String continueLabel = GlobalRepository.newLabel();
+        print("if (" + e + " < 0) goto " + haltLabel + ";");
+        print("if (" + sym + "$SIZE < " + e + ") goto " + haltLabel + ";");
+        print("if (" + sym + "$SIZE == " + e + ") goto " + haltLabel + ";");
+        print("goto " + continueLabel + ";");
+        print(haltLabel + ":");
+        halt();
+        print(continueLabel + ":");
+
+        Type contentType = ((ArrayType) t).getContentType();
+        ExpressionSymbol tmp = new ExpressionSymbol(GlobalRepository.newVar(), contentType);
+        print(tmp + " = " + id.toString() + "[" + e + "];");
+        RESULT = tmp;
+    :}
+    // listExpressions
+    | LCURL listExpression:ls {:
+        Type contentType = null;
+        if (ls.size() > 0) {
+            contentType = ls.get(0).getType();
+        }
+        ArrayType type = new ArrayType(contentType, ls.size());
+        ExpressionSymbol resultSym = new ExpressionSymbol(GlobalRepository.newVar(), type);
+        // Write all symbols to temporary array
+        for (int i = 0; i < ls.size() ; i++) {
+            print(resultSym + "[" + i + "] = " + ls.get(i) + ";");
+        }
+        // Store size too!
+        print(resultSym + "$SIZE = " + ls.size() + ";");
+        RESULT = resultSym;
+    :} RCURL
+    | IDENT:id DOT IDENT:attribute {:
+        ExpressionSymbol sym = SymTable.get(id.toString());
+        if (sym == null) {
+            halt();
+        }
+        Type t = sym.getType();
+        RESULT = t.attributeAccess(sym, attribute.toString());
+    :}
+    ;
+// END EXPRESSIONS
+listExpression ::= expression:e {:
+        Type t = e.getType();
+        ArrayList<ExpressionSymbol> ls = new ArrayList<>();
+        ls.add(e);
+        RESULT = ls;
+    :}
+    | expression:e COMA listExpression:ls {:
+        // Exact type match
+        if (e.getType() != ls.get(0).getType()) {
+            halt();
+        }
+        ls.add(0, e);
+        RESULT = ls;
+    :}
+    ;
+
+condition ::= expression:e1 EQ expression:e2 {:
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
+        print("if (" + e1 + " == " + e2 + ") goto " + trueL + ";");
+        // False block first
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
+        RESULT = var;
+    :}
+    | expression:e1 NOTEQ expression:e2 {:
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
+        print("if (" + e1 + " != " + e2 + ") goto " + trueL + ";");
+        // False block first
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
+        RESULT = var;
+    :}
+    | expression:e1 LT expression:e2 {:
+        String var = GlobalRepository.newVar();
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
+        print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
+        // False block first
+        print(var + " = 0;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(var + " = 1;");
+        print(endL + ":");
+        RESULT = var;
+    :}
+    | expression:e1 LTEQ expression:e2 {:
+        String var = GlobalRepository.newVar();
+        String tl = GlobalRepository.newLabel();
+        String el = GlobalRepository.newLabel();
+
+        print("if (" + e1 + " < " + e2 + ") goto " + tl + ";");
+        print("if (" + e1 + " == " + e2 + ") goto " + tl + ";");
+        // False part
+        print(var + " = 0;");
+        print("goto " + el + ";");
+        // True part
+        print(tl + ":");
+        print(var + " = 1;");
+        // End
+        print(el + ":");
+        RESULT = var;
+    :}
+    | expression:e1 GT expression:e2 {:
+        String var = GlobalRepository.newVar();
+        String fl = GlobalRepository.newLabel();
+        String el = GlobalRepository.newLabel();
+
+        print("if (" + e1 + " < " + e2 + ") goto " + fl + ";");
+        print("if (" + e1 + " == " + e2 + ") goto " + fl + ";");
+        // True part
+        print(var + " = 1;");
+        print("goto " + el + ";");
+        // False part
+        print(fl + ":");
+        print(var + " = 0;");
+        // End
+        print(el + ":");
+        RESULT = var;
+    :}
+    | expression:e1 GTEQ expression:e2 {:
+         String var = GlobalRepository.newVar();
+         String trueL = GlobalRepository.newLabel();
+         String endL = GlobalRepository.newLabel();
+         print("if (" + e1 + " < " + e2 + ") goto " + trueL + ";");
+         // False block
+         print(var + " = 1;");
+         print("goto " + endL + ";");
+         // True block
+         print(trueL + ":");
+         print(var + " = 0;");
+         // End
+         print(endL + ":");
+         RESULT = var;
+    :}
+    | NOT condition:c {:
+        String trueL = GlobalRepository.newLabel();
+        String endL = GlobalRepository.newLabel();
+        print("if (" + c + " == 1) goto " + trueL + ";");
+        print(c + " = 1;");
+        print("goto " + endL + ";");
+        print(trueL + ":");
+        print(c + " = 0;");
+        print(endL + ":");
+        RESULT = c;
+    :}
+    |  condition:c1 AND nt_newLabel:fl {:
+        // Short circuit
+        print("if (" + c1 + " == 0) goto " + fl + ";");
+    :} condition:c2 {:
+        String var = GlobalRepository.newVar();
+        String trueLabel = GlobalRepository.newLabel();
+        String endLabel = GlobalRepository.newLabel();
+
+        print("if (" + c2 + " == 0) goto " + fl + ";");
+        print("goto " + trueLabel + ";");
+
+        // Labels and actions
+        print(trueLabel + ":");
+        print(var + " = 1;");
+        print("goto " + endLabel + ";");
+        print(fl + ":");
+        print(var + " = 0;");
+        print("goto " + endLabel + ";");
+
+        print(endLabel + ":");
+        RESULT = var;
+    :}
+    | condition:c1 OR nt_newLabel:tl {:
+        // Short circuit
+        print("if (" + c1 + " == 1) goto " + tl + ";");
+    :} condition:c2 {:
+        String var = GlobalRepository.newVar();
+        String falseLabel = GlobalRepository.newLabel();
+        String endLabel = GlobalRepository.newLabel();
+
+        print("if (" + c2 + " == 1) goto " + tl + ";");
+        print("goto " + falseLabel + ";");
+
+        // Labels and actions
+        print(tl + ":");
+        print(var + " = 1;");
+        print("goto " + endLabel + ";");
+
+        print(falseLabel + ":");
+        print(var + " = 0;");
+
+        print(endLabel + ":");
+        RESULT = var;
+
+    :}
+    | LPAR condition:c1 {: RESULT = c1; :} RPAR;

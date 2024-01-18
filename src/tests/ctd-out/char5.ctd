@@ -1,0 +1,4 @@
+$t0 = 92;
+printc $t0;
+$t1 = 1;
+print $t1;

@@ -6,36 +6,44 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int TIMES = 17;
-  public static final int AND = 26;
-  public static final int LT = 21;
-  public static final int IDENT = 28;
-  public static final int ELSE = 3;
-  public static final int NOTEQ = 20;
-  public static final int PLUS = 14;
-  public static final int INT = 29;
-  public static final int OR = 27;
-  public static final int LCURL = 10;
-  public static final int SEMI = 12;
-  public static final int WHILE = 4;
-  public static final int NOT = 25;
-  public static final int IF = 2;
-  public static final int ASIGN = 13;
-  public static final int GT = 23;
-  public static final int DO = 5;
-  public static final int LTEQ = 22;
-  public static final int EOF = 0;
-  public static final int DIVIDE = 18;
-  public static final int MINUS = 15;
-  public static final int PRINT = 7;
-  public static final int error = 1;
-  public static final int EQ = 19;
-  public static final int GTEQ = 24;
-  public static final int RPAR = 9;
+  public static final int DIVIDE = 21;
+  public static final int GTEQ = 27;
+  public static final int CHAR = 36;
+  public static final int LTEQ = 25;
+  public static final int UMINUS = 19;
+  public static final int SEMI = 14;
+  public static final int INT = 33;
   public static final int FOR = 6;
+  public static final int MINUS = 18;
+  public static final int LSQR = 12;
+  public static final int NOT = 28;
+  public static final int LCURL = 10;
+  public static final int AND = 29;
+  public static final int LT = 24;
+  public static final int RPAR = 9;
+  public static final int TYPE = 34;
+  public static final int OR = 30;
+  public static final int PLUS = 17;
+  public static final int IF = 2;
+  public static final int DOT = 31;
+  public static final int EOF = 0;
+  public static final int error = 1;
+  public static final int COMA = 15;
+  public static final int IDENT = 32;
+  public static final int EQ = 22;
   public static final int RCURL = 11;
+  public static final int TIMES = 20;
+  public static final int ELSE = 3;
+  public static final int RSQR = 13;
+  public static final int WHILE = 4;
+  public static final int FLOAT = 35;
+  public static final int ASIGN = 16;
+  public static final int STRING = 37;
   public static final int LPAR = 8;
-  public static final int UMINUS = 16;
+  public static final int GT = 26;
+  public static final int PRINT = 7;
+  public static final int DO = 5;
+  public static final int NOTEQ = 23;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -49,7 +57,10 @@ public class sym {
   "RPAR",
   "LCURL",
   "RCURL",
+  "LSQR",
+  "RSQR",
   "SEMI",
+  "COMA",
   "ASIGN",
   "PLUS",
   "MINUS",
@@ -65,8 +76,13 @@ public class sym {
   "NOT",
   "AND",
   "OR",
+  "DOT",
   "IDENT",
-  "INT"
+  "INT",
+  "TYPE",
+  "FLOAT",
+  "CHAR",
+  "STRING"
   };
 }
 

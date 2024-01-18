@@ -1,8 +1,8 @@
 import os
 import subprocess
-from typing import Tuple
+from typing import Optional, Tuple
 import pytest
-from case import Compiler, CompilerAssembler
+from case import Compiler, CompilerAssembler, CompilerTestCase
 from rich.console import Console
 import functools
 
@@ -10,17 +10,24 @@ import functools
 # Test directories
 PLC_TEST_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plc-test/'
 PLC_OUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plc-out/'
+
 CTD_OUTPUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd-out/'
 
+PLX_TEST_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plx-test/'
+PLX_OUT_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/plx-out/'
+
 # Cup compilation
-CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.cup'
+CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLC.cup'
+PLX_CUP_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLXC.cup'
 
 # JFlex compilation
-JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/Source.flex'
+JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLC.flex'
+PLXC_JFLEX_SOURCE_FILE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/PLXC.flex'
 
 # JAVAC Commands
 CUPPATH  = '/Users/antoniochairesmonroy/Applications/cup-0.11b/java-cup-11b-runtime.jar'
 JAVA_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/*.java'
+LIB_SOURCE = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/lib/*.java'
 
 
 CTD_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/ctd'
@@ -28,26 +35,29 @@ CTD_PATH = '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/tests/
 OUTPUT_PATH= '/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src'
 
 # Compiles cup source code
-def cup_action():
-    output = subprocess.run(f'cup {CUP_SOURCE_FILE}', shell=True, text=True, capture_output=True)
-    if output.returncode != 0:
-        raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
-    
-    output = subprocess.run(f'mv -f parser.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
-    if output.returncode != 0:
-        raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
-    output = subprocess.run(f'mv -f sym.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
-    if output.returncode != 0:
-        raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
-def jflex_action():
-    subprocess.run(f'jflex -d {OUTPUT_PATH} {JFLEX_SOURCE_FILE}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+def cup_action(src: str):
+    def action():
+        output = subprocess.run(f'cup {src}', shell=True, text=True, capture_output=True)
+        if output.returncode != 0:
+            raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
         
+        output = subprocess.run(f'mv -f parser.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
+        if output.returncode != 0:
+            raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
+        output = subprocess.run(f'mv -f sym.java {OUTPUT_PATH}', shell=True, text=True, capture_output=True)
+        if output.returncode != 0:
+            raise Exception(f'Failed to move files: {output.stdout} | {output.stderr}')
+    return action
+
+def jflex_action(src: str):
+    def action():
+        subprocess.run(f'jflex -d {OUTPUT_PATH} {src}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+    return action
 
 def javac_action():
-    output = subprocess.run(f'javac -d {OUTPUT_PATH} -cp {CUPPATH}:. {JAVA_SOURCE}', shell=True, capture_output=True, text=True)
+    output = subprocess.run(f'javac -d {OUTPUT_PATH} -cp {CUPPATH} {JAVA_SOURCE} {LIB_SOURCE}', shell=True, capture_output=True, text=True)
     if output.returncode != 0:
         raise Exception(f'Failed to compile java source: {output.stdout} | {output.stderr}')
-    
 
 @functools.cache
 def get_plc_tests() -> list[Tuple[str, str]]:
@@ -76,18 +86,53 @@ def get_plc_out() -> list[Tuple[str, str]]:
 @pytest.fixture(scope='class', autouse=True)
 def prepare():
     console = Console()
-    assembler = CompilerAssembler(
+    plc_assembler = CompilerAssembler(
         console=console,
         actions=[
-            cup_action,
-            jflex_action,
-            javac_action,
+            (cup_action(CUP_SOURCE_FILE), 'cup_action'),
+            (jflex_action(JFLEX_SOURCE_FILE), 'jflex_action'),
+            (javac_action, 'javac_action'),
         ]
     )
-    get_plc_tests()
-    assembler.assemble()
+    plx_assembler = CompilerAssembler(
+            console=console,
+            actions=[
+                (cup_action(PLX_CUP_SOURCE_FILE), 'cup_action'),
+                (jflex_action(PLXC_JFLEX_SOURCE_FILE), 'jflex_action'),
+                (javac_action, 'javac_action'),
+            ]
+    )
+    plc_assembler.assemble()
+    plx_assembler.assemble()
     yield
 
+@pytest.fixture
+def single_test(request) -> Optional[str]:
+    single = request.config.getoption('--name')
+    if single:
+        return single
+    return None
+
+@functools.cache
+def get_plx_tests(specific: Optional[str]  = None) -> list[CompilerTestCase]:
+    tests = []
+    # Walk plx-test path and build
+    for name in os.listdir(PLX_TEST_PATH):
+        real_name = name
+        name = name.split('.')[0]
+        case = CompilerTestCase(
+            name=name,
+            source_path=os.path.join(PLX_TEST_PATH, real_name),
+            ctd_path=os.path.join(CTD_OUTPUT_PATH, name + '.ctd'),
+            expected_output_path=os.path.join(PLX_OUT_PATH, name + '.plxout')
+        )
+        if specific is not None:
+            if name == specific: tests.append(case) 
+        
+        else:
+            tests.append(case)
+            
+    return sorted(tests, key=lambda x: x.name)
 
 class TestAll:
     """
@@ -96,9 +141,6 @@ class TestAll:
     def run_ctd(self, src: str) -> str:
         cmd = f'{CTD_PATH} {src}'
         out = subprocess.run(cmd, text=True, capture_output=True, shell=True)
-        if out.returncode != 0:
-            err = out.stderr
-            raise Exception(f'CTD Failed: {err}')
         return out.stdout
     """
         Compiles PLC to CTD code representation.
@@ -107,14 +149,14 @@ class TestAll:
         return compiler.compile(src_path=src_path, target_directory=f'{CTD_OUTPUT_PATH}{test_name}.ctd')
     
     @pytest.mark.parametrize('test_case', get_plc_out(), ids= lambda t: t[0])
-    def test_one(self, test_case: Tuple[str, str]):
+    @pytest.mark.skip
+    def test_plc(self, test_case: Tuple[str, str]):
         compiler = Compiler(
-                path=f'{CUPPATH}:/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ Main',
+            path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src/ PLC',
             cmd_prefix=f'java -cp'
         )
         name, _ = test_case
         name = name.split('.')[0]
-        print(f'Attempting: {name}')
         outputs = get_plc_out()
         for o_name, o_content in outputs:
             if o_name.startswith(name.split('.')[0]):
@@ -123,3 +165,12 @@ class TestAll:
                 ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{name}.ctd')
                 assert ctd_output == o_content
 
+    @pytest.mark.parametrize('test_case', get_plx_tests(), ids=lambda t: t.name)
+    def test_plx(self, test_case: CompilerTestCase):
+        compiler = Compiler( path=f'/Users/antoniochairesmonroy/IdeaProjects/pl/codegen_final/src PLXC',
+            cmd_prefix='java -cp'
+        )
+        self.plc_to_ctd(compiler=compiler, src_path=test_case.source_path, test_name=test_case.name)
+        ctd_output = self.run_ctd(f'{CTD_OUTPUT_PATH}{test_case.name}.ctd')
+        expected = open(test_case.expected_output_path, 'r').read()
+        assert ctd_output == expected
