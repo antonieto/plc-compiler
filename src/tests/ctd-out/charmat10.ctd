@@ -1,68 +1,55 @@
-$t0 = 6;
-st$SIZE = $t0;
-$t1 = 6;
-mat$SIZE = $t1;
-$t2 = 1.0;
-prod = $t2;
-$t3 = 0;
-i = $t3;
+   $st_length = 6;
+   $mat_length = 6;
+   prod = 1.0;
+   i = 0;
 L0:
-if (i < st$SIZE) goto L4;
-$t4 = 0;
-goto L5;
-L4:
-$t4 = 1;
-L5:
-if ($t4 == 1) goto L1;
-goto L3;
-L2:
-$t5 = 1;
-$t6 = i + $t5;
-i = $t6;
-goto L0;
-L1:
-$t7 = 63;
-$t8 = i + $t7;
-$t9 = $t8;
-if (i < 0) goto L6;
-if (st$SIZE < i) goto L6;
-if (st$SIZE == i) goto L6;
-goto L7;
-L6:
-error;
-halt;
-L7:
-st[i] = $t9;
-if (i < 0) goto L8;
-if (st$SIZE < i) goto L8;
-if (st$SIZE == i) goto L8;
-goto L9;
-L8:
-error;
-halt;
-L9:
-$t10 = st[i];
-$t11 = (int) $t10;
-if (i < 0) goto L10;
-if (mat$SIZE < i) goto L10;
-if (mat$SIZE == i) goto L10;
-goto L11;
-L10:
-error;
-halt;
-L11:
-mat[i] = $t11;
-if (i < 0) goto L12;
-if (mat$SIZE < i) goto L12;
-if (mat$SIZE == i) goto L12;
-goto L13;
-L12:
-error;
-halt;
-L13:
-$t12 = mat[i];
-$t13 = prod *r $t12;
-prod = $t13;
-goto L2;
+   if (i < $st_length) goto L1;
+   goto L2;
 L3:
-print prod;
+   $t0 = i + 1;
+   i = $t0;
+   goto L0;
+L1:
+   if (i < 0) goto L4;
+   if (6 < i) goto L4;
+   if (6 == i) goto L4;
+   goto L5;
+L4:
+   error;
+   halt;
+L5:
+   $t1 = i + 63;
+   st[i] = $t1;
+   if (i < 0) goto L6;
+   if (6 < i) goto L6;
+   if (6 == i) goto L6;
+   goto L7;
+L6:
+   error;
+   halt;
+L7:
+   if (i < 0) goto L8;
+   if (6 < i) goto L8;
+   if (6 == i) goto L8;
+   goto L9;
+L8:
+   error;
+   halt;
+L9:
+   $t2 = st[i];
+   $t3 = (float) $t2;
+   mat[i] = $t3;
+   if (i < 0) goto L10;
+   if (6 < i) goto L10;
+   if (6 == i) goto L10;
+   goto L11;
+L10:
+   error;
+   halt;
+L11:
+   $t4 = mat[i];
+   $t5 = prod *r $t4;
+   prod = $t5;
+   goto L3;
+L2:
+   print prod;

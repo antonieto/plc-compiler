@@ -1,3 +1,2 @@
-$t0 = 38;
-a = $t0;
-printc a;
+   a = 38;
+   printc a;

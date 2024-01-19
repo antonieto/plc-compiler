@@ -477,7 +477,7 @@ class CUP$parser$actions {
           case 0: // statement_list ::= statement 
             {
               Object RESULT =null;
-		 SymTable.print(); 
+
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement_list",0, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -952,7 +952,7 @@ class CUP$parser$actions {
 		int tleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int tright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object t = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
- PLXC.typeBuffer = Type.getType(t.toString()); 
+ GlobalRepository.typeBuffer = Type.getType(t.toString()); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("NT$11",24, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -966,7 +966,7 @@ class CUP$parser$actions {
 		int tleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
 		int tright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		Object t = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		 PLXC.typeBuffer = null; 
+		 GlobalRepository.typeBuffer = null; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("declStatement",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -997,7 +997,7 @@ class CUP$parser$actions {
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object id = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Type t = PLXC.typeBuffer;
+        Type t = GlobalRepository.typeBuffer;
         ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
         SymTable.add(id.toString(), sym);
     
@@ -1022,7 +1022,7 @@ class CUP$parser$actions {
         }
         // Store size
         print(id.toString() + "$SIZE = " + sizeExpr + ";");
-        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ArrayType t = new ArrayType(GlobalRepository.typeBuffer, 0);
         ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
         SymTable.add(id.toString(), sym);
     
@@ -1041,7 +1041,7 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		ExpressionSymbol e = (ExpressionSymbol)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Type t = PLXC.typeBuffer;
+        Type t = GlobalRepository.typeBuffer;
         Type expressionType = e.getType();
         if (!t.isCompatibleWith(expressionType)) {
             halt();
@@ -1072,7 +1072,7 @@ class CUP$parser$actions {
             print("# Indexes must be integers");
             halt();
         }
-        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ArrayType t = new ArrayType(GlobalRepository.typeBuffer, 0);
         Type exprType = arrExpr.getType();
         if (!t.isCompatibleWith(exprType)) {
             print("# Incompatible types");
@@ -1408,7 +1408,7 @@ class CUP$parser$actions {
 		
         // Store all characters in temp arr of chars
         String var = GlobalRepository.newVar();
-        System.out.println("The length of string: " + val + " is " + val.toString().length());
+        val = StringType.convertEscapedCharacters(val.toString());
         for (int i = 0; i < val.toString().length(); i++) {
             char c = val.toString().charAt(i);
             print(var + "[" + i + "] = " + (int) c + ";");

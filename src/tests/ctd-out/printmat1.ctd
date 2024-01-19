@@ -1,42 +1,34 @@
-$t0 = 3;
-n$SIZE = $t0;
-$t1 = 0;
-$t2 = 65;
-if ($t1 < 0) goto L0;
-if (n$SIZE < $t1) goto L0;
-if (n$SIZE == $t1) goto L0;
-goto L1;
+   $n_length = 3;
+   if (0 < 0) goto L0;
+   if (3 < 0) goto L0;
+   if (3 == 0) goto L0;
+   goto L1;
 L0:
-error;
-halt;
+   error;
+   halt;
 L1:
-n[$t1] = $t2;
-$t3 = 1;
-$t4 = 66;
-if ($t3 < 0) goto L2;
-if (n$SIZE < $t3) goto L2;
-if (n$SIZE == $t3) goto L2;
-goto L3;
+   n[0] = 65;
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
 L2:
-error;
-halt;
+   error;
+   halt;
 L3:
-n[$t3] = $t4;
-$t5 = 2;
-$t6 = 67;
-if ($t5 < 0) goto L4;
-if (n$SIZE < $t5) goto L4;
-if (n$SIZE == $t5) goto L4;
-goto L5;
+   n[1] = 66;
+   if (2 < 0) goto L4;
+   if (3 < 2) goto L4;
+   if (3 == 2) goto L4;
+   goto L5;
 L4:
-error;
-halt;
+   error;
+   halt;
 L5:
-n[$t5] = $t6;
-$t7 = 0;
-L6:
-if (n$SIZE == $t7) goto L7;
-if (n$SIZE< $t7) goto L7;
-$t8 = n[$t7];
-print $t8;$t7 = $t7 + 1;
-goto L6;L7:
+   n[2] = 67;
+   $t0 = n[0];
+   print $t0;
+   $t0 = n[1];
+   print $t0;
+   $t0 = n[2];
+   print $t0;

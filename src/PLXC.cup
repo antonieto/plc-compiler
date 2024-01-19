@@ -78,7 +78,7 @@ precedence left TIMES, DIVIDE;
 precedence left UMINUS;
 precedence left LPAR, RPAR;
 
-statement_list ::= statement {: SymTable.print(); :}
+statement_list ::= statement
     | statement_list statement;
 
 // utils
@@ -148,12 +148,12 @@ forStatement ::= FOR LPAR forStepExpr SEMI
 
 forStepExpr ::= expression | ;
 
-declStatement ::= TYPE:t {: PLXC.typeBuffer = Type.getType(t.toString()); :} declarationList {: PLXC.typeBuffer = null; :};
+declStatement ::= TYPE:t {: GlobalRepository.typeBuffer = Type.getType(t.toString()); :} declarationList {: GlobalRepository.typeBuffer = null; :};
 
 declarationList ::= declaration | declaration COMA declarationList;
 
 declaration ::= IDENT:id {:
-        Type t = PLXC.typeBuffer;
+        Type t = GlobalRepository.typeBuffer;
         ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
         SymTable.add(id.toString(), sym);
     :}
@@ -164,13 +164,13 @@ declaration ::= IDENT:id {:
         }
         // Store size
         print(id.toString() + "$SIZE = " + sizeExpr + ";");
-        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ArrayType t = new ArrayType(GlobalRepository.typeBuffer, 0);
         ExpressionSymbol sym = new ExpressionSymbol(id.toString(), t);
         SymTable.add(id.toString(), sym);
     :}
     // Perform assignment, type check
     | IDENT:id ASIGN expression:e {:
-        Type t = PLXC.typeBuffer;
+        Type t = GlobalRepository.typeBuffer;
         Type expressionType = e.getType();
         if (!t.isCompatibleWith(expressionType)) {
             halt();
@@ -185,7 +185,7 @@ declaration ::= IDENT:id {:
             print("# Indexes must be integers");
             halt();
         }
-        ArrayType t = new ArrayType(PLXC.typeBuffer, 0);
+        ArrayType t = new ArrayType(GlobalRepository.typeBuffer, 0);
         Type exprType = arrExpr.getType();
         if (!t.isCompatibleWith(exprType)) {
             print("# Incompatible types");
@@ -333,7 +333,7 @@ expression ::= expression:e1 PLUS expression:e2 {:
     | STRING:val {:
         // Store all characters in temp arr of chars
         String var = GlobalRepository.newVar();
-        System.out.println("The length of string: " + val + " is " + val.toString().length());
+        val = StringType.convertEscapedCharacters(val.toString());
         for (int i = 0; i < val.toString().length(); i++) {
             char c = val.toString().charAt(i);
             print(var + "[" + i + "] = " + (int) c + ";");

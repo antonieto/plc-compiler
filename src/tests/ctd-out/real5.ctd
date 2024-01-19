@@ -1,5 +1,10 @@
-$t0 = 3.1416;
-error;
-halt;
-x = $t0;
-print x;
+# ERROR: Se esta asignando un valor real a una variable entera
+   error;
+   halt;
+
+# ---------------- listado de la tabla de simbolos --------------------
+
+#                    x         1         INTEGER
+ 
+# ---------------------------------------------------------------------
+

@@ -1,45 +1,28 @@
-$t0 = 1;
-i = $t0;
+   i = 1;
 L0:
-$t1 = 10;
-if (i < $t1) goto L4;
-$t2 = 0;
-goto L5;
-L4:
-$t2 = 1;
-L5:
-if ($t2 == 1) goto L1;
-goto L3;
-L2:
-$t3 = 1;
-$t4 = i + $t3;
-i = $t4;
-goto L0;
-L1:
-$t5 = 2;
-k = $t5;
-$t6 = 1;
-j = $t6;
-L6:
-if (j < k) goto L10;
-$t7 = 0;
-goto L11;
-L10:
-$t7 = 1;
-L11:
-if ($t7 == 1) goto L7;
-goto L9;
-L8:
-$t8 = j + i;
-j = $t8;
-goto L6;
-L7:
-$t9 = k * i;
-k = $t9;
-$t10 = x + i;
-x = $t10;
-goto L8;
-L9:
-goto L2;
+   if (i < 10) goto L1;
+   goto L2;
 L3:
-print x;
+   $t0 = i + 1;
+   i = $t0;
+   goto L0;
+L1:
+   k = 2;
+   j = 1;
+L4:
+   if (j < k) goto L5;
+   goto L6;
+L7:
+   $t1 = j + i;
+   j = $t1;
+   goto L4;
+L5:
+   $t2 = k * i;
+   k = $t2;
+   $t3 = x + i;
+   x = $t3;
+   goto L7;
+L6:
+   goto L3;
+L2:
+   print x;

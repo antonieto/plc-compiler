@@ -1,78 +1,40 @@
-$t0 = 3;
-x$SIZE = $t0;
-$t1 = 3;
-y$SIZE = $t1;
-$t2 = 0;
-$t3 = 1;
-if ($t2 < 0) goto L0;
-if (x$SIZE < $t2) goto L0;
-if (x$SIZE == $t2) goto L0;
-goto L1;
+   $x_length = 3;
+   $y_length = 3;
+   if (0 < 0) goto L0;
+   if (3 < 0) goto L0;
+   if (3 == 0) goto L0;
+   goto L1;
 L0:
-error;
-halt;
+   error;
+   halt;
 L1:
-x[$t2] = $t3;
-$t4 = 1;
-$t5 = 2;
-if ($t4 < 0) goto L2;
-if (x$SIZE < $t4) goto L2;
-if (x$SIZE == $t4) goto L2;
-goto L3;
+   x[0] = 1;
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
 L2:
-error;
-halt;
+   error;
+   halt;
 L3:
-x[$t4] = $t5;
-$t6 = 2;
-$t7 = 3;
-if ($t6 < 0) goto L4;
-if (x$SIZE < $t6) goto L4;
-if (x$SIZE == $t6) goto L4;
-goto L5;
+   x[1] = 2;
+   if (2 < 0) goto L4;
+   if (3 < 2) goto L4;
+   if (3 == 2) goto L4;
+   goto L5;
 L4:
-error;
-halt;
+   error;
+   halt;
 L5:
-x[$t6] = $t7;
-error;
-halt;
-if (x$SIZE == y$SIZE) goto L7;
-if (x$SIZE < y$SIZE) goto L7;
-error;
-halt;
-L7:
-y = x;
-$t8 = 0;
-if ($t8 < 0) goto L8;
-if (y$SIZE < $t8) goto L8;
-if (y$SIZE == $t8) goto L8;
-goto L9;
-L8:
-error;
-halt;
-L9:
-$t9 = y[$t8];
-$t10 = 1;
-if ($t10 < 0) goto L10;
-if (y$SIZE < $t10) goto L10;
-if (y$SIZE == $t10) goto L10;
-goto L11;
-L10:
-error;
-halt;
-L11:
-$t11 = y[$t10];
-$t12 = $t9 +r $t11;
-$t13 = 2;
-if ($t13 < 0) goto L12;
-if (y$SIZE < $t13) goto L12;
-if (y$SIZE == $t13) goto L12;
-goto L13;
-L12:
-error;
-halt;
-L13:
-$t14 = y[$t13];
-$t15 = $t12 +r $t14;
-print $t15;
+   x[2] = 3;
+# ERROR: Error de tipos
+   error;
+   halt;
+
+# ---------------- listado de la tabla de simbolos --------------------
+
+#                    x         1         ARRAY[3](INTEGER)
+#                    y         1         ARRAY[3](REAL)
+ 
+# ---------------------------------------------------------------------
+

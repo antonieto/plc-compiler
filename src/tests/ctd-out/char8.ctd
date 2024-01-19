@@ -1,6 +1,4 @@
-$t0 = 48;
-a = $t0;
-$t1 = 49;
-b = $t1;
-printc a;
-printc b;
+   a = 48;
+   b = 49;
+   printc a;
+   printc b;

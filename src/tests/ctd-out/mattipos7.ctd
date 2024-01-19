@@ -1,53 +1,43 @@
-$t0 = 3;
-x$SIZE = $t0;
-$t1 = 3.1416;
-pi = $t1;
-$t2 = 1.0;
-$t3 = 1.1;
-$t4 = 2.2;
-$t5 = $t3 +r $t4;
-$t6 = 2.0;
-$t7 = $t6 *r pi;
-$t8[0] = $t2;
-$t8[1] = $t5;
-$t8[2] = $t7;
-$t8$SIZE = 3;
-if ($t8$SIZE == x$SIZE) goto L1;
-if ($t8$SIZE < x$SIZE) goto L1;
-error;
-halt;
+   $x_length = 3;
+   pi = 3.1416;
+   $t0[0] = 1.0;
+   $t1 = 1.1 +r 2.2;
+   $t0[1] = $t1;
+   $t2 = 2.0 *r pi;
+   $t0[2] = $t2;
+   $t3 = $t0[0];
+   x[0] = $t3;
+   $t3 = $t0[1];
+   x[1] = $t3;
+   $t3 = $t0[2];
+   x[2] = $t3;
+   if (0 < 0) goto L0;
+   if (3 < 0) goto L0;
+   if (3 == 0) goto L0;
+   goto L1;
+L0:
+   error;
+   halt;
 L1:
-x = $t8;
-$t9 = 0;
-if ($t9 < 0) goto L2;
-if (x$SIZE < $t9) goto L2;
-if (x$SIZE == $t9) goto L2;
-goto L3;
+   $t4 = x[0];
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
 L2:
-error;
-halt;
+   error;
+   halt;
 L3:
-$t10 = x[$t9];
-$t11 = 1;
-if ($t11 < 0) goto L4;
-if (x$SIZE < $t11) goto L4;
-if (x$SIZE == $t11) goto L4;
-goto L5;
+   $t5 = x[1];
+   $t6 = $t4 +r $t5;
+   if (2 < 0) goto L4;
+   if (3 < 2) goto L4;
+   if (3 == 2) goto L4;
+   goto L5;
 L4:
-error;
-halt;
+   error;
+   halt;
 L5:
-$t12 = x[$t11];
-$t13 = $t10 +r $t12;
-$t14 = 2;
-if ($t14 < 0) goto L6;
-if (x$SIZE < $t14) goto L6;
-if (x$SIZE == $t14) goto L6;
-goto L7;
-L6:
-error;
-halt;
-L7:
-$t15 = x[$t14];
-$t16 = $t13 +r $t15;
-print $t16;
+   $t7 = x[2];
+   $t8 = $t6 +r $t7;
+   print $t8;

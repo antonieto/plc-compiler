@@ -1,48 +1,40 @@
-$t0 = 3;
-st$SIZE = $t0;
-$t1 = 65;
-$t2 = 66;
-$t3 = 67;
-$t4[0] = $t1;
-$t4[1] = $t2;
-$t4[2] = $t3;
-$t4$SIZE = 3;
-if ($t4$SIZE == st$SIZE) goto L1;
-if ($t4$SIZE < st$SIZE) goto L1;
-error;
-halt;
+   $st_length = 3;
+   $t0[0] = 65;
+   $t0[1] = 66;
+   $t0[2] = 67;
+   $t1 = $t0[0];
+   st[0] = $t1;
+   $t1 = $t0[1];
+   st[1] = $t1;
+   $t1 = $t0[2];
+   st[2] = $t1;
+   if (2 < 0) goto L0;
+   if (3 < 2) goto L0;
+   if (3 == 2) goto L0;
+   goto L1;
+L0:
+   error;
+   halt;
 L1:
-st = $t4;
-$t5 = 2;
-if ($t5 < 0) goto L2;
-if (st$SIZE < $t5) goto L2;
-if (st$SIZE == $t5) goto L2;
-goto L3;
+   $t2 = st[2];
+   printc $t2;
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
 L2:
-error;
-halt;
+   error;
+   halt;
 L3:
-$t6 = st[$t5];
-printc $t6;
-$t7 = 1;
-if ($t7 < 0) goto L4;
-if (st$SIZE < $t7) goto L4;
-if (st$SIZE == $t7) goto L4;
-goto L5;
+   $t3 = st[1];
+   printc $t3;
+   if (0 < 0) goto L4;
+   if (3 < 0) goto L4;
+   if (3 == 0) goto L4;
+   goto L5;
 L4:
-error;
-halt;
+   error;
+   halt;
 L5:
-$t8 = st[$t7];
-printc $t8;
-$t9 = 0;
-if ($t9 < 0) goto L6;
-if (st$SIZE < $t9) goto L6;
-if (st$SIZE == $t9) goto L6;
-goto L7;
-L6:
-error;
-halt;
-L7:
-$t10 = st[$t9];
-printc $t10;
+   $t4 = st[0];
+   printc $t4;

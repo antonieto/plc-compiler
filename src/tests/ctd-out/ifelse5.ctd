@@ -1,121 +1,62 @@
-$t0 = 1;
-x = $t0;
-if (a != b) goto L3;
-$t1 = 0;
-goto L4;
-L3:
-$t1 = 1;
-L4:
-if ($t1 == 1) goto L0;
-if ($t1 == 0) goto L1;
+   x = 1;
+   if (a == b) goto L1;
+   goto L0;
 L0:
-$t2 = 2;
-$t3 = x + $t2;
-x = $t3;
-if (b == c) goto L8;
-$t4 = 0;
-goto L9;
-L8:
-$t4 = 1;
-L9:
-if ($t4 == 1) goto L5;
-if ($t4 == 0) goto L6;
+   $t0 = x + 2;
+   x = $t0;
+   if (b == c) goto L3;
+   goto L4;
+L3:
+   $t1 = x + 3;
+   x = $t1;
+   goto L5;
+L4:
 L5:
-$t5 = 3;
-$t6 = x + $t5;
-x = $t6;
-goto L7;
+   if (a == b) goto L7;
+   goto L6;
 L6:
-goto L7;
+   $t2 = x - 3;
+   x = $t2;
+   goto L8;
 L7:
-if (a != b) goto L13;
-$t7 = 0;
-goto L14;
-L13:
-$t7 = 1;
-L14:
-if ($t7 == 1) goto L10;
-if ($t7 == 0) goto L11;
-L10:
-$t8 = 3;
-$t9 = x - $t8;
-x = $t9;
-goto L12;
-L11:
-$t10 = 8;
-$t11 = x + $t10;
-x = $t11;
-goto L12;
-L12:
-goto L2;
+   $t3 = x + 8;
+   x = $t3;
+L8:
+   goto L2;
 L1:
-if (a == c) goto L18;
-$t12 = 0;
-goto L19;
-L18:
-$t12 = 1;
-L19:
-if ($t12 == 1) goto L15;
-if ($t12 == 0) goto L16;
+   if (a == c) goto L9;
+   goto L10;
+L9:
+   if (c == d) goto L13;
+   goto L12;
+L12:
+   $t4 = x + 4;
+   x = $t4;
+   goto L14;
+L13:
+   $t5 = x + 4;
+   x = $t5;
+   if (a == c) goto L15;
+   goto L16;
 L15:
-if (c != d) goto L23;
-$t13 = 0;
-goto L24;
-L23:
-$t13 = 1;
-L24:
-if ($t13 == 1) goto L20;
-if ($t13 == 0) goto L21;
-L20:
-$t14 = 4;
-$t15 = x + $t14;
-x = $t15;
-goto L22;
-L21:
-$t16 = 4;
-$t17 = x + $t16;
-x = $t17;
-if (a == c) goto L28;
-$t18 = 0;
-goto L29;
-L28:
-$t18 = 1;
-L29:
-if ($t18 == 1) goto L25;
-if ($t18 == 0) goto L26;
-L25:
-$t19 = 5;
-$t20 = x + $t19;
-x = $t20;
-goto L27;
-L26:
-if (b == c) goto L33;
-$t21 = 0;
-goto L34;
-L33:
-$t21 = 1;
-L34:
-if ($t21 == 1) goto L30;
-if ($t21 == 0) goto L31;
-L30:
-$t22 = 6;
-$t23 = x + $t22;
-x = $t23;
-goto L32;
-L31:
-$t24 = 7;
-$t25 = x + $t24;
-x = $t25;
-goto L32;
-L32:
-goto L27;
-L27:
-goto L22;
-L22:
-goto L17;
+   $t6 = x + 5;
+   x = $t6;
+   goto L17;
 L16:
-goto L17;
+   if (b == c) goto L18;
+   goto L19;
+L18:
+   $t7 = x + 6;
+   x = $t7;
+   goto L20;
+L19:
+   $t8 = x + 7;
+   x = $t8;
+L20:
 L17:
-goto L2;
+L14:
+   goto L11;
+L10:
+L11:
 L2:
-print x;
+   print x;

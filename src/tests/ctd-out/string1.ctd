@@ -1,28 +1,30 @@
-$t0[0] = 97;
-$t0[1] = 98;
-$t0[2] = 99;
-$t0[3] = 0;
-L$t0$prloop:
-$t0$reg = $t0[$t0$cnt];
-if ($t0$reg == 0) goto L$t0$pend;
-writec $t0$reg;
-$t0$cnt = $t0$cnt + 1;
-goto L$t0$prloop;
-L$t0$pend:
-writec 10;
-$t0$cnt = 0;
-
-$t1[0] = 97;
-$t1[1] = 98;
-$t1[2] = 99;
-$t1[3] = 0;
-L$t1$prloop:
-$t1$reg = $t1[$t1$cnt];
-if ($t1$reg == 0) goto L$t1$pend;
-writec $t1$reg;
-$t1$cnt = $t1$cnt + 1;
-goto L$t1$prloop;
-L$t1$pend:
-writec 10;
-$t1$cnt = 0;
-
+   $t0[0] = 97;
+   $t0[1] = 98;
+   $t0[2] = 99;
+   $$t0_length = 3;
+   $t1 = 0;
+L0:
+   if ($t1 < $$t0_length) goto L1;
+   goto L2;
+L1:
+   $t2 = $t0[$t1];
+   writec $t2;
+   $t1 = $t1 + 1;
+   goto L0;
+L2:
+   writec 10;
+   $t3[0] = 97;
+   $t3[1] = 98;
+   $t3[2] = 99;
+   $$t3_length = 3;
+   $t4 = 0;
+L3:
+   if ($t4 < $$t3_length) goto L4;
+   goto L5;
+L4:
+   $t5 = $t3[$t4];
+   writec $t5;
+   $t4 = $t4 + 1;
+   goto L3;
+L5:
+   writec 10;

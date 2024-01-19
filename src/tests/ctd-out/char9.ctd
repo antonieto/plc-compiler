@@ -1,9 +1,6 @@
-$t0 = 88;
-a = $t0;
-$t1 = 89;
-b = $t1;
-$t2 = 90;
-c = $t2;
-printc a;
-printc b;
-printc c;
+   a = 88;
+   b = 89;
+   c = 90;
+   printc a;
+   printc b;
+   printc c;
